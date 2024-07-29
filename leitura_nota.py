@@ -250,7 +250,7 @@ def ler_nota():
         return res2
 
     except Error as e:
-        print(f"Error: {e}")
+        print(f"Error: {e.errno} - {e.msg}")
         return None
 
 
