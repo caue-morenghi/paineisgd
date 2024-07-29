@@ -1,11 +1,13 @@
 import { useForm } from "react-hook-form"
 
 type TFEditForm = {
+    id: number;
     numero: string
     data: string
     cnpj: string
     valor: string
     descricao: string
+    src: string
 }
 
 const FDescricaoForm = () => {

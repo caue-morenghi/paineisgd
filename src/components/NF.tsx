@@ -6,12 +6,13 @@ import { DescricaoForm } from "./DescricaoForm";
 import nfsrc from "../data/kfc.jpg";
 
 export type TNotaFiscal = {
+  id: number;
   data: string;
   cnpj: string;
   numero: string;
   valor: string;
-  src: string;
   descricao: string;
+  src: string;
 };
 
 export default function NF() {
@@ -23,7 +24,7 @@ export default function NF() {
       const data = response.data;
       const jsonStr = data.replace(/'/g, '"');
       const dataObj = JSON.parse(jsonStr);
-      console.log(dataObj);
+      console.log('OBJETO: ', dataObj);
       if (dataObj.Erro === 'QR Code não encontrado na imagem.') {
         alert("Erro ao inclur Nota Fiscal. Faça novamente");
         window.location.reload()
@@ -58,9 +59,9 @@ export default function NF() {
       </Button>
         {nf && (
             <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', marginBottom: '2em' }}>
-                <DescricaoForm data={nf.data} cnpj={nf.cnpj} descricao={nf.descricao} numero={nf.numero} src={nf.src} valor={nf.valor}/>
+                <DescricaoForm id={nf.id} data={nf.data} cnpj={nf.cnpj} descricao={nf.descricao} numero={nf.numero} src={nf.src} valor={nf.valor}/>
                 {/* <img src={`${process.env.PUBLIC_URL}/teste.webp`} alt="" width={200}/> */}
-                <img src={nfsrc} alt="" width={200}/>
+              <img src={`${process.env.PUBLIC_URL}/images/${nf.numero}.jpg`} alt="" width={200}/>
             </Box>
         )}
     </div>

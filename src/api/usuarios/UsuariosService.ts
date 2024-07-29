@@ -16,6 +16,17 @@ type TCreateNota = {
   numero: string;
   valor: string;
   descricao: string;
+  src: string
+}
+
+type TUpdateNota = {
+  id: number;
+  data: string;
+  cnpj: string;
+  numero: string;
+  valor: string;
+  descricao: string;
+  src: string
 }
 
 const getNotas = async (): Promise<TNotaFiscalBD[] | undefined> => {
@@ -59,4 +70,19 @@ const createNotaById = async (nota: TCreateNota): Promise<TCreateNota | undefine
   }
 }
 
-export { getNotas, getNotaById, createNotaById };
+const updateNota = async (nota: TUpdateNota): Promise<TUpdateNota | undefined> => {
+  try {
+    const { data } = await api.put(`/nfe/${nota.id}`, nota);
+
+    if (data) {
+      alert("Descricao adicionada com sucesso!");
+      window.location.reload();
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    alert("Erro ao incluir descricao de nota fiscal. Faça novamente");
+  }
+}
+
+export { getNotas, getNotaById, createNotaById, updateNota };
