@@ -209,7 +209,8 @@ def ler_nota():
             host="localhost",
             user="root",
             password="caue2005",
-            database="leituranfes"
+            database="leituranfes",
+            auth_plugin='mysql_native_password'
         )
         mycursor = mydb.cursor()
 
@@ -229,14 +230,14 @@ def ler_nota():
         res2 = {
             "id": myresult[0][0],
             "numero": myresult[0][1],
-            "data": myresult[0][2].strftime('%d/%m/%Y'),
+            "data": myresult[0][2].strftime('%Y-%m-%d'),
             "valor": myresult[0][3],
             "cnpj": myresult[0][4],
             "descricao": myresult[0][5],
             "src": myresult[0][6]
         }
 
-        destino = r'C:\Users\Quaestum\Desktop\Cauê\quaestum-caue\projetos-quaestum\leiturasatfrontend\public\images'
+        destino = r'C:\Users\quaestum\Desktop\projetos-quaestum\leiturassat\leituranfes\public\images'
         shutil.copy(src, destino)
 
         nome_arq = os.path.basename(src)
