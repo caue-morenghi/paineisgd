@@ -14,7 +14,7 @@ export const Menu = () => {
       }}
     >
       <Typography variant="h4" component="h1" sx={{ color: 'black', marginBottom: '20px' }}>
-        Recebimento de notas fiscais
+        Configuração Painel GlanData
       </Typography>
 
       <Box sx={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px', backgroundColor: "#fff", display: 'flex', flexDirection: 'column', textAlign: 'center', padding: 3, width: '50%' }}>
@@ -30,7 +30,7 @@ export const Menu = () => {
                 marginBottom: '2em'
             }}
         >
-            Receber notas fiscais
+            Configurar novo acesso ao banco de dados
         </Link>
         <Link
             href="/consultarnf"
@@ -43,7 +43,7 @@ export const Menu = () => {
             },
             }}
         >
-            Consultar notas fiscais
+            Consultar acessos de banco de dados
         </Link>
       </Box>
     </Box>

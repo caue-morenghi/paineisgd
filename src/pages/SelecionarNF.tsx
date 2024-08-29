@@ -1,5 +1,5 @@
 import { Box, Typography, Link } from "@mui/material";
-import NF from "../components/NF";
+import { FormBD } from "../components/form-bd/FormBD";
 
 export const SelecionarNF = () => {
 
@@ -20,7 +20,7 @@ export const SelecionarNF = () => {
         component="h1"
         sx={{ color: "black", marginBottom: "20px" }}
       >
-        Selecionar documento (NF)
+        Configuração de acesso ao banco de dados GlanData
       </Typography>
 
       <Box
@@ -34,7 +34,7 @@ export const SelecionarNF = () => {
           width: "60%",
         }}
       >
-        <NF />
+        <FormBD />
 
         <Link
           href="/menu"

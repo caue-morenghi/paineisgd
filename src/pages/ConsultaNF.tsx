@@ -15,7 +15,7 @@ export const ConsultaNF = () => {
       }}
     >
       <Typography variant="h4" component="h1" sx={{ color: 'black', marginBottom: '20px' }}>
-        Consulta de Notas Fiscais
+        Consulta de acessos de bancos de dados
       </Typography>
 
       <Box sx={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px', backgroundColor: "#fff", display: 'flex', flexDirection: 'column', textAlign: 'center', padding: 3, width: '90%' }}>

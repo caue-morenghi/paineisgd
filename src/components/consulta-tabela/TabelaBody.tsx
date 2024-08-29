@@ -1,35 +1,31 @@
-import { TableBody, Typography } from "@mui/material";
+import { TableBody } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getNotas, TNotaFiscalBD } from "../../api/usuarios/UsuariosService";
+import { TNotaFiscalBD } from "../../api/usuarios/UsuariosService";
 import { NotaTabela } from "./NotaTabela";
+import { getBancos, TBanco } from "../../api/usuarios/BancosService";
 
 export const TabelaBody = () => {
 
-    const [notasfiscais, setnotasfiscais] = useState<TNotaFiscalBD[] | undefined>([]);
+    const [bancos, setbancos] = useState<TBanco[] | undefined>([]);
     const [vazio, setvazio] = useState<true | false>(false);
 
     useEffect(() => {
-        const notas = getNotas()
-        notas.then((response) => {
+        const bancos = getBancos()
+        bancos.then((response) => {
             console.log(response)
             if (response?.length === 0) {
                 setvazio(true)
             }
-            setnotasfiscais(response)
+            setbancos(response)
         })
     }, []);
 
   return (
     <TableBody>
-        {notasfiscais?.map(nota => 
+        {bancos?.map(banco => 
             <NotaTabela 
-                key={nota.id}
-                data={nota.data}
-                cnpj={nota.cnpj}
-                numero={nota.numero}
-                valor={nota.valor}
-                descricao={nota.descricao}
-                id={nota.id}
+                banco={banco}
+                key={banco.id}
             />
         )}
     </TableBody>

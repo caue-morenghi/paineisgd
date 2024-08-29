@@ -9,14 +9,7 @@ export const TabelaHead = () => {
             textAlign: "center",
           }}
         >
-          Nº NF
-        </TableCell>
-        <TableCell
-          sx={{
-            textAlign: "center",
-          }}
-        >
-          Data
+          ID
         </TableCell>
         <TableCell
           sx={{
@@ -30,13 +23,55 @@ export const TabelaHead = () => {
             textAlign: "center",
           }}
         >
-          Valor
+          IP
         </TableCell>
         <TableCell
           sx={{
             textAlign: "center",
           }}
-        ></TableCell>
+        >
+          Porta
+        </TableCell>
+        <TableCell
+          sx={{
+            textAlign: "center",
+          }}
+        >
+          Usuário
+        </TableCell>
+        <TableCell
+          sx={{
+            textAlign: "center",
+          }}
+        >
+          Senha
+        </TableCell>
+        <TableCell
+          sx={{
+            textAlign: "center",
+          }}
+        >
+          Nome BD
+        </TableCell>
+        <TableCell
+          sx={{
+            textAlign: "center",
+          }}
+        >
+          Situação
+        </TableCell>
+        <TableCell
+          sx={{
+            textAlign: "center",
+          }}
+        >
+        </TableCell>
+        <TableCell
+          sx={{
+            textAlign: "center",
+          }}
+        >
+        </TableCell>
       </TableRow>
     </TableHead>
   );
