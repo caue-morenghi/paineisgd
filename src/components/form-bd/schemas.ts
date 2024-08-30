@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const registroBanco = z.object({
-    cnpj: z.string().regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, 'CNPJ deve estar no formato 99.999.999/9999-99'),
+    cnpj: z.string(),
     ip: z.string().regex(/^[0-9.]+$/, 'IP deve conter apenas números e pontos'),
     porta: z.string().length(4, 'Porta deve conter 4 dígitos'),
-    usuario: z.string().regex(/^\S+$/, 'Usuário não deve conter espaços em branco'),
-    senha: z.string().regex(/^\S+$/, 'Senha não deve conter espaços em branco'),
-    nome: z.string().regex(/^\S+$/, 'Nome não deve conter espaços em branco'),
+    usuario: z.string().regex(/^[a-zA-Z0-9.]+$/, 'Usuário deve conter apenas letras, números ou ponto'),
+    senha: z.string().regex(/^[a-zA-Z0-9.]+$/, 'Senha deve conter apenas letras, números ou ponto'),
+    nome: z.string().regex(/^[a-zA-Z0-9.]+$/, 'Nome deve conter apenas letras, números ou ponto'),
     situacao: z.string(),
 });

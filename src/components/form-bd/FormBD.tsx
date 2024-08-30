@@ -1,11 +1,12 @@
 import { Box, Typography } from "@mui/material";
 import FBDForm, { TBDForm } from "./formBDhook";
 import { createBanco } from "../../api/usuarios/BancosService";
-import { useEffect } from "react";
-import { filtrarIp, inserirMascaraCnpj, limitarPorta } from "../../functions/cnpj";
+import { useEffect, useState } from "react";
+import { filtrarIp, inserirMascaraCnpj, inserirMascaraCpf, limitarPorta } from "../../functions/cnpj";
 
 export const FormBD = () => {
   const { handleSubmit, register, errors, watch, setValue } = FBDForm();
+  const [useCpfMask, setUseCpfMask] = useState(false);
 
   const cnpjValue = watch("cnpj");
   const ipValue = watch("ip");
@@ -13,8 +14,8 @@ export const FormBD = () => {
 
   useEffect(() => {
     if (cnpjValue) {
-      const maskedCnpj = inserirMascaraCnpj(cnpjValue);
-      setValue("cnpj", maskedCnpj);
+      const maskedValue = useCpfMask ? inserirMascaraCpf(cnpjValue) : inserirMascaraCnpj(cnpjValue);
+      setValue("cnpj", maskedValue);
     }
     if (ipValue) {
       const filteredIp = filtrarIp(ipValue);
@@ -24,12 +25,12 @@ export const FormBD = () => {
       const limitedPorta = limitarPorta(portaValue);
       setValue("porta", limitedPorta);
     }
-  }, [portaValue, ipValue, cnpjValue, setValue]);
+  }, [portaValue, ipValue, cnpjValue, useCpfMask, setValue]);
 
   const handleTeste = async (data: TBDForm) => {
     const convertedData = {
-      cnpj: parseFloat(data.cnpj),
-      ip: parseFloat(data.ip),
+      cnpj: data.cnpj,
+      ip: data.ip,
       porta: parseFloat(data.porta),
       usuario: data.usuario,
       senha: data.senha,
@@ -52,9 +53,7 @@ export const FormBD = () => {
       onSubmit={handleSubmit(handleTeste)}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
+        <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
           <Typography sx={{ fontWeight: 600 }}>CNPJ: </Typography>
           <input
             style={{
@@ -68,10 +67,16 @@ export const FormBD = () => {
             {...register("cnpj")}
           />
           {errors.cnpj && <span style={{ color: "#b32929", fontWeight: 600 }}>{errors.cnpj.message}</span>}
+          <label>
+            <input
+              type="checkbox"
+              checked={useCpfMask}
+              onChange={() => setUseCpfMask(!useCpfMask)}
+            />
+            CPF
+          </label>
         </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
+        <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
           <Typography sx={{ fontWeight: 600 }}>IP: </Typography>
           <input
             style={{
@@ -86,9 +91,7 @@ export const FormBD = () => {
           />
           {errors.ip && <span style={{ color: "#b32929", fontWeight: 600 }}>{errors.ip.message}</span>}
         </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
+        <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
           <Typography sx={{ fontWeight: 600 }}>Porta: </Typography>
           <input
             style={{
@@ -100,12 +103,10 @@ export const FormBD = () => {
             }}
             type="number"
             {...register("porta")}
-            />
-            {errors.porta && <span style={{ color: "#b32929", fontWeight: 600 }}>{errors.porta.message}</span>}
+          />
+          {errors.porta && <span style={{ color: "#b32929", fontWeight: 600 }}>{errors.porta.message}</span>}
         </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
+        <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
           <Typography sx={{ fontWeight: 600 }}>Usuário</Typography>
           <input
             style={{
@@ -120,9 +121,7 @@ export const FormBD = () => {
           />
           {errors.usuario && <span style={{ color: "#b32929", fontWeight: 600 }}>{errors.usuario.message}</span>}
         </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
+        <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
           <Typography sx={{ fontWeight: 600 }}>Senha</Typography>
           <input
             style={{
@@ -137,9 +136,7 @@ export const FormBD = () => {
           />
           {errors.senha && <span style={{ color: "#b32929", fontWeight: 600 }}>{errors.senha.message}</span>}
         </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
+        <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
           <Typography sx={{ fontWeight: 600 }}>Nome BD: </Typography>
           <input
             style={{
