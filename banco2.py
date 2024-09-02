@@ -5,7 +5,7 @@ from pathlib import Path
 import argparse
 
 def salvar_credenciais_txt(cnpj, ip, porta, usuario, senha, nome_banco):
-    file_path = Path(r'/Users/novo1/Desktop/banco_dados.rtf')
+    file_path = Path(r'C:\Users\Quaestum\Desktop\banco_dados.txt')
     data = f"{cnpj};{ip};{porta};{usuario};{senha};{nome_banco}\n"
     
     if not os.path.exists(file_path):

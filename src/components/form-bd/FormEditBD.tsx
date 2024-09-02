@@ -35,13 +35,13 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
   const handleTeste = async (data: TEditBD) => {
     const convertedData = {
       id: banco.id,
-      cnpj: parseFloat(data.cnpj),
-      ip: parseFloat(data.ip),
-      porta: parseFloat(data.porta),
+      cnpj: data.cnpj,
+      ip: data.ip,
+      porta: data.porta,
       usuario: data.usuario,
       senha: data.senha,
       nome: data.nome,
-      situacao: parseFloat(data.situacao),
+      situacao: data.situacao,
     };
     console.log(convertedData);
     //await updatebanco(convertedData);
@@ -77,7 +77,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
                 fontSize: "0.8rem",
                 border: "1px solid #000",
                 }}
-                type="number"
+                type="text"
                 {...register("cnpj")}
                 disabled
             />
@@ -95,7 +95,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
               fontSize: "0.8rem",
               border: "1px solid #000",
             }}
-            type="number"
+            type="text"
             {...register("ip")}
           />
         </Box>

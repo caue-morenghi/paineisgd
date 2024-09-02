@@ -11,7 +11,7 @@ type TBancoObj = {
 
 export const NotaTabela = ({ banco }: TBancoObj) => {
 
-  const handleTeste = async (banco: TBanco) => {
+  const handleTeste = async (banco: TBancoConsulta) => {
     const convertedbanco = {
       id: banco.id,
       cnpj: parseFloat(banco.cnpj),
@@ -22,7 +22,8 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
       nome: banco.nome,
       situacao: parseInt(banco.situacao) === 1 ? 0 : 1,
     };
-    await updatebanco(convertedbanco);
+    //await updatebanco(convertedbanco);
+    console.log(convertedbanco);
   };
 
   return (
@@ -96,11 +97,11 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
           textAlign: "center",
         }}
       >
-        {/* <Tooltip title={parseInt(banco.situacao) === 1 ? "Desativar" : "Ativar"}>
+        <Tooltip title={parseInt(banco.situacao) === 1 ? "Desativar" : "Ativar"}>
           <IconButton onClick={() => handleTeste(banco)}>
             <RemoveCircle />
           </IconButton>
-        </Tooltip> */}
+        </Tooltip>
       </TableCell>
     </TableRow>
   );
