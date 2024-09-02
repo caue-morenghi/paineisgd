@@ -13,6 +13,17 @@ export type TBanco = {
   updated_at: string;
 };
 
+export type TBancoConsulta = {
+  id: string;
+  cnpj: string;
+  ip: string;
+  porta: string;
+  usuario: string;
+  senha: string;
+  nome: string;
+  situacao: string;
+};
+
 type TCreateBanco = {
   cnpj: number;
   ip: number;

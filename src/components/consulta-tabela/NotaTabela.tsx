@@ -1,12 +1,12 @@
 import { IconButton, TableCell, TableRow, Tooltip } from "@mui/material";
-import { TBanco, updatebanco } from "../../api/usuarios/BancosService";
+import { TBanco, TBancoConsulta, updatebanco } from "../../api/usuarios/BancosService";
 import EditBD from "../form-bd/EditBD";
 import { Delete, RemoveCircle } from "@mui/icons-material";
 import Senha from "./Senha";
 import { inserirMascaraCnpj } from "../../functions/cnpj";
 
 type TBancoObj = {
-  banco: TBanco;
+  banco: TBancoConsulta;
 };
 
 export const NotaTabela = ({ banco }: TBancoObj) => {
@@ -88,7 +88,7 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
           textAlign: "center",
         }}
       >
-        <EditBD banco={banco} key={banco.id} />
+        {/* <EditBD banco={banco} key={banco.id} /> */}
       </TableCell>
 
       <TableCell
@@ -96,11 +96,11 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
           textAlign: "center",
         }}
       >
-        <Tooltip title={parseInt(banco.situacao) === 1 ? "Desativar" : "Ativar"}>
+        {/* <Tooltip title={parseInt(banco.situacao) === 1 ? "Desativar" : "Ativar"}>
           <IconButton onClick={() => handleTeste(banco)}>
             <RemoveCircle />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
       </TableCell>
     </TableRow>
   );

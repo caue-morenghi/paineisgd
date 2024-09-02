@@ -2,6 +2,7 @@ import os
 import mysql.connector
 from mysql.connector import Error
 from pathlib import Path
+import argparse
 
 def salvar_credenciais_txt(cnpj, ip, porta, usuario, senha, nome_banco):
     file_path = Path(r'C:\Users\Quaestum\Desktop\banco_dados.txt')
@@ -39,19 +40,23 @@ def inserir_dados_bd(connection, cnpj, nome_banco):
         return f"Erro ao inserir dados: {e}"
 
 def main():
-    cnpj = input("Digite o CNPJ: ")
-    ip = input("Digite o IP: ")
-    porta = input("Digite a Porta: ")
-    usuario = input("Digite o Usuário: ")
-    senha = input("Digite a Senha: ")
-    nome_banco = input("Digite o Nome do Banco de Dados: ")
+    parser = argparse.ArgumentParser(description='Processar dados do banco.')
+    parser.add_argument('--cnpj', required=True, help='CNPJ do banco')
+    parser.add_argument('--ip', required=True, help='IP do banco')
+    parser.add_argument('--porta', required=True, help='Porta do banco')
+    parser.add_argument('--usuario', required=True, help='Usuário do banco')
+    parser.add_argument('--senha', required=True, help='Senha do banco')
+    parser.add_argument('--nome_banco', required=True, help='Nome do banco de dados')
 
-    salvar_credenciais_txt(cnpj, ip, porta, usuario, senha, nome_banco)
+    args = parser.parse_args()
 
-    connection = testar_conexao(ip, porta, usuario, senha, nome_banco)
+    salvar_credenciais_txt(args.cnpj, args.ip, args.porta, args.usuario, args.senha, args.nome_banco)
+
+    connection = testar_conexao(args.ip, args.porta, args.usuario, args.senha, args.nome_banco)
     print(connection)
     if connection:
-        result = inserir_dados_bd(connection, cnpj, nome_banco)
+        numero_cnpj = int(args.cnpj.replace('.', '').replace('/', '').replace('-', '').replace(' ', ''))
+        result = inserir_dados_bd(connection, numero_cnpj, args.nome_banco)
         connection.close()
         print(result)
     else:

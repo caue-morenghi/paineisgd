@@ -41,20 +41,17 @@ def ler_bancos_txt(caminho_arquivo):
         linhas = file.readlines()
         for linha in linhas:
             dados = linha.strip().split(';')
-            if len(dados) == 8:  # Verificar se todos os campos estão presentes
-                banco = {
-                    "id": dados[0],
-                    "cnpj": dados[1],
-                    "ip": dados[2],
-                    "porta": dados[3],
-                    "usuario": dados[4],
-                    "senha": dados[5],
-                    "nome": dados[6],
-                    "situacao": dados[7]
-                }
-                bancos.append(banco)
-            else:
-                print(f"Linha inválida: {linha.strip()}")  # Log de linha inválida
+            banco = {
+                "id": int(dados[0]),
+                "cnpj": dados[1].replace('.', '').replace('/', '').replace('-', '').replace(' ', ''),
+                "ip": dados[2],
+                "porta": int(dados[3]),
+                "usuario": dados[4],
+                "senha": dados[5],
+                "nome": dados[6],
+                "situacao": int(dados[7])
+            }
+            bancos.append(banco)
     
     return bancos
 

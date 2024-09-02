@@ -1,12 +1,12 @@
 import { Box, Typography } from "@mui/material";
 import FBDForm, { TBDForm } from "./formBDhook";
-import { createBanco } from "../../api/usuarios/BancosService";
 import { useEffect, useState } from "react";
 import { filtrarIp, inserirMascaraCnpj, inserirMascaraCpf, limitarPorta } from "../../functions/cnpj";
 
 export const FormBD = () => {
   const { handleSubmit, register, errors, watch, setValue } = FBDForm();
   const [useCpfMask, setUseCpfMask] = useState(false);
+  const [useCnpjMask, setUseCnpjMask] = useState(false);
 
   const cnpjValue = watch("cnpj");
   const ipValue = watch("ip");
@@ -38,7 +38,35 @@ export const FormBD = () => {
       situacao: 1,
     };
     console.log(convertedData);
-    //await createBanco(convertedData);
+
+    try {
+      const response = await fetch('http://localhost:5000/run-script', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(convertedData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      console.log(result.output);
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+  };
+
+  const handleCpfCheckboxChange = () => {
+    setUseCpfMask(true);
+    setUseCnpjMask(false);
+  };
+
+  const handleCnpjCheckboxChange = () => {
+    setUseCpfMask(false);
+    setUseCnpjMask(true);
   };
 
   return (
@@ -54,28 +82,43 @@ export const FormBD = () => {
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
-          <Typography sx={{ fontWeight: 600 }}>CNPJ: </Typography>
-          <input
-            style={{
-              outline: "none",
-              padding: ".5em",
-              backgroundColor: "#fff",
-              fontSize: "0.8rem",
-              border: "1px solid #000",
-            }}
-            type="text"
-            {...register("cnpj")}
-          />
-          {errors.cnpj && <span style={{ color: "#b32929", fontWeight: 600 }}>{errors.cnpj.message}</span>}
-          <label>
-            <input
-              type="checkbox"
-              checked={useCpfMask}
-              onChange={() => setUseCpfMask(!useCpfMask)}
-            />
-            CPF
-          </label>
+          <Typography sx={{ fontWeight: 600 }}>Selecione o documento: </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <label>
+              <input
+                type="checkbox"
+                checked={useCnpjMask}
+                onChange={handleCnpjCheckboxChange}
+              />
+              CNPJ
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={useCpfMask}
+                onChange={handleCpfCheckboxChange}
+              />
+              CPF
+            </label>
+          </Box>
         </Box>
+        {(useCpfMask || useCnpjMask) && (
+          <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
+            <Typography sx={{ fontWeight: 600 }}>Documento: </Typography>
+            <input
+              style={{
+                outline: "none",
+                padding: ".5em",
+                backgroundColor: "#fff",
+                fontSize: "0.8rem",
+                border: "1px solid #000",
+              }}
+              type="text"
+              {...register("cnpj")}
+            />
+            {errors.cnpj && <span style={{ color: "#b32929", fontWeight: 600 }}>{errors.cnpj.message}</span>}
+          </Box>
+        )}
         <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
           <Typography sx={{ fontWeight: 600 }}>IP: </Typography>
           <input
