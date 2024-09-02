@@ -88,7 +88,7 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
           textAlign: "center",
         }}
       >
-        {/* <EditBD banco={banco} key={banco.id} /> */}
+        <EditBD banco={banco} key={banco.id} />
       </TableCell>
 
       <TableCell

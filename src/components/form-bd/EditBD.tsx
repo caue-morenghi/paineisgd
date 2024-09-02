@@ -5,7 +5,7 @@ import Modal from "@mui/material/Modal";
 import { Edit } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { FormEditBD } from "./FormEditBD";
-import { TBanco } from "../../api/usuarios/BancosService";
+import { TBanco, TBancoConsulta } from "../../api/usuarios/BancosService";
 
 const style = {
   position: "absolute" as "absolute",
@@ -20,7 +20,7 @@ const style = {
 };
 
 type TBancoObj = {
-  banco: TBanco;
+  banco: TBancoConsulta;
 };
 
 export default function EditBD({ banco }: TBancoObj) {

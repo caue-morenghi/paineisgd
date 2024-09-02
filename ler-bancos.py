@@ -26,7 +26,7 @@ def run_script():
 
 @app.route('/get-bancos', methods=['GET'])
 def get_bancos():
-    caminho_arquivo = r'C:\Users\Quaestum\Desktop\banco_dados.txt'
+    caminho_arquivo = r'/Users/novo1/Desktop/banco_dados.rtf'
     bancos = ler_bancos_txt(caminho_arquivo)
     return jsonify(bancos)
 

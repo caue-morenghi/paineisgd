@@ -7,11 +7,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { TBanco, updatebanco } from "../../api/usuarios/BancosService";
+import { TBanco, TBancoConsulta, updatebanco } from "../../api/usuarios/BancosService";
 import EditFormBD, { TEditBD } from "./EditFormBDhook";
 
 type TBancoObj = {
-  banco: TBanco;
+  banco: TBancoConsulta;
 };
 
 export const FormEditBD = ({ banco }: TBancoObj) => {

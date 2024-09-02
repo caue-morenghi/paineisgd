@@ -26,7 +26,7 @@ def run_script():
 
 @app.route('/get-bancos', methods=['GET'])
 def get_bancos():
-    caminho_arquivo = r'C:\Users\Quaestum\Desktop\banco_dados.txt'
+    caminho_arquivo = r'/Users/novo1/Desktop/banco_dados.rtf'
     bancos = ler_bancos_txt(caminho_arquivo)
     return jsonify(bancos)
 
@@ -35,7 +35,8 @@ def ler_bancos_txt(caminho_arquivo):
     file_path = Path(caminho_arquivo)
     
     if not os.path.exists(file_path):
-        raise FileNotFoundError(f"O arquivo {caminho_arquivo} não foi encontrado.")
+        #raise FileNotFoundError(f"O arquivo {caminho_arquivo} não foi encontrado.")
+        print(f"O arquivo {caminho_arquivo} não foi encontrado.")
     
     with open(file_path, 'r') as file:
         linhas = file.readlines()
