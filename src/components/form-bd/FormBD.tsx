@@ -36,7 +36,7 @@ export const FormBD = () => {
 
   const handleDocumentTypeChange = (type: "cpf" | "cnpj") => {
     setDocumentType(type);
-    setValue("cnpj", ""); // Clear the document input field
+    setValue("cnpj", "");
   };
 
   const handleTeste = async (data: TBDForm) => {
@@ -60,7 +60,14 @@ export const FormBD = () => {
         body: JSON.stringify(convertedData),
       });
       const result = await response.json();
-      console.log(result);
+      const resposta = String(result.output);
+      if (resposta.includes("Duplicate entry")) {
+        alert("Erro ao inserir dados: Nome do banco já foi cadastrado!");
+      }
+      if (result.output === "Credenciais salvas com sucesso!\n") {
+        alert("Credenciais salvas com sucesso!");
+        window.location.reload();
+      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -111,6 +118,9 @@ export const FormBD = () => {
                 border: "1px solid #000",
               }}
               type="text"
+              placeholder={
+                documentType === "cpf" ? "000.000.000-00" : "00.000.000/0000-00"
+              }
               {...register("cnpj")}
             />
             {errors.cnpj && (

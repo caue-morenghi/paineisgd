@@ -8,8 +8,8 @@ export const ConsultaNF = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        backgroundColor: '#F0F2F5', // Cinza claro como fundo
-        color: 'black', // Texto preto
+        backgroundColor: '#F0F2F5',
+        color: 'black',
         height: '100vh',
         padding: '20px',
       }}
@@ -18,7 +18,7 @@ export const ConsultaNF = () => {
         Consulta de acessos de bancos de dados
       </Typography>
 
-      <Box sx={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px', backgroundColor: "#fff", display: 'flex', flexDirection: 'column', textAlign: 'center', padding: 3, width: '90%' }}>
+      <Box sx={{ boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px', backgroundColor: "#fff", display: 'flex', flexDirection: 'column', textAlign: 'center', padding: 3, width: '90%', overflowY: 'hidden' }}>
         
         <TabelaConsultaNFs />
 

@@ -1,7 +1,7 @@
 import { IconButton, TableCell, TableRow, Tooltip } from "@mui/material";
-import { TBanco, TBancoConsulta, updatebanco } from "../../api/usuarios/BancosService";
+import { TBancoConsulta } from "../../api/usuarios/BancosService";
 import EditBD from "../form-bd/EditBD";
-import { Delete, RemoveCircle } from "@mui/icons-material";
+import { RemoveCircle } from "@mui/icons-material";
 import Senha from "./Senha";
 import { inserirMascaraCnpj } from "../../functions/cnpj";
 
@@ -10,20 +10,41 @@ type TBancoObj = {
 };
 
 export const NotaTabela = ({ banco }: TBancoObj) => {
-
   const handleTeste = async (banco: TBancoConsulta) => {
     const convertedbanco = {
       id: banco.id,
-      cnpj: parseFloat(banco.cnpj),
-      ip: parseFloat(banco.ip),
-      porta: parseFloat(banco.porta),
+      cnpj: banco.cnpj,
+      ip: banco.ip,
+      porta: banco.porta,
       usuario: banco.usuario,
       senha: banco.senha,
       nome: banco.nome,
+      nome_antigo: banco.nome,
       situacao: parseInt(banco.situacao) === 1 ? 0 : 1,
     };
-    //await updatebanco(convertedbanco);
     console.log(convertedbanco);
+
+    try {
+      const response = await fetch("http://localhost:5000/update-banco", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(convertedbanco),
+      });
+      const result = await response.json();
+      const resposta = String(result.output)
+      console.log(resposta)
+      if (resposta.includes('sucesso')) {
+        alert("Banco atualizado com sucesso!");
+        window.location.reload();
+      }
+      if (resposta.includes("Erro ao conectar ao banco de dados")) {
+        alert("Erro ao atualizar banco de dados. Uma ou mais credenciais podem estar incorretas.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -68,7 +89,7 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
           textAlign: "center",
         }}
       >
-        <Senha senha={banco.senha}/>
+        <Senha senha={banco.senha} />
       </TableCell>
       <TableCell
         sx={{
@@ -82,7 +103,11 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
           textAlign: "center",
         }}
       >
-        {parseInt(banco.situacao) === 1 ? <span style={{ color: '#30b64f' }}>Ativo</span> : <span style={{ color: '#f44336' }}>Inativo</span>}
+        {parseInt(banco.situacao) === 1 ? (
+          <span style={{ color: "#30b64f" }}>Ativo</span>
+        ) : (
+          <span style={{ color: "#f44336" }}>Inativo</span>
+        )}
       </TableCell>
       <TableCell
         sx={{
@@ -97,7 +122,9 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
           textAlign: "center",
         }}
       >
-        <Tooltip title={parseInt(banco.situacao) === 1 ? "Desativar" : "Ativar"}>
+        <Tooltip
+          title={parseInt(banco.situacao) === 1 ? "Desativar" : "Ativar"}
+        >
           <IconButton onClick={() => handleTeste(banco)}>
             <RemoveCircle />
           </IconButton>

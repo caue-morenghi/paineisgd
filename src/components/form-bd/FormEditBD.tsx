@@ -7,7 +7,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { TBanco, TBancoConsulta, updatebanco } from "../../api/usuarios/BancosService";
+import {
+  TBancoConsulta,
+} from "../../api/usuarios/BancosService";
 import EditFormBD, { TEditBD } from "./EditFormBDhook";
 
 type TBancoObj = {
@@ -15,7 +17,7 @@ type TBancoObj = {
 };
 
 export const FormEditBD = ({ banco }: TBancoObj) => {
-  const { errors, handleSubmit, register, setValue, handleDataSubmit } =
+  const { handleSubmit, register, setValue } =
     EditFormBD();
 
   const handleSetValues = useCallback(() => {
@@ -26,7 +28,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
     setValue("senha", banco.senha);
     setValue("nome", banco.nome);
     setValue("situacao", banco.situacao);
-  }, []);
+  }, [banco.cnpj, banco.ip, banco.porta, banco.usuario, banco.senha, banco.nome, banco.situacao, setValue]);
 
   useEffect(() => {
     handleSetValues();
@@ -41,10 +43,36 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
       usuario: data.usuario,
       senha: data.senha,
       nome: data.nome,
+      nome_antigo: banco.nome,
       situacao: data.situacao,
     };
+    
     console.log(convertedData);
-    //await updatebanco(convertedData);
+
+    try {
+      const response = await fetch("http://localhost:5000/update-banco", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(convertedData),
+      });
+      const result = await response.json();
+      const resposta = String(result.output)
+      console.log(resposta)
+      if (resposta.includes('sucesso')) {
+        alert("Banco atualizado com sucesso!");
+        window.location.reload();
+      }
+      if (resposta.includes("Erro ao conectar ao banco de dados")) {
+        alert("Erro ao atualizar banco de dados. Uma ou mais credenciais podem estar incorretas.");
+      }
+      if (resposta.includes("Duplicate entry")) {
+        alert("Erro ao atualizar banco de dados. Nome do banco já está cadastrado.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   const [situacao, setsituacao] = useState(banco.situacao);
@@ -70,16 +98,16 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
           <Typography sx={{ fontWeight: 600 }}>CNPJ: </Typography>
           <Tooltip title="Não é possível alterar o CNPJ">
             <input
-                style={{
+              style={{
                 outline: "none",
                 padding: ".5em",
                 backgroundColor: "#fff",
                 fontSize: "0.8rem",
                 border: "1px solid #000",
-                }}
-                type="text"
-                {...register("cnpj")}
-                disabled
+              }}
+              type="text"
+              {...register("cnpj")}
+              disabled
             />
           </Tooltip>
         </Box>

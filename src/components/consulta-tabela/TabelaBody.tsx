@@ -33,7 +33,7 @@ export const TabelaBody = () => {
             {bancos.map(banco => (
                 <NotaTabela 
                     banco={banco}
-                    key={banco.id}
+                    key={banco.nome}
                 />
             ))}
         </TableBody>
