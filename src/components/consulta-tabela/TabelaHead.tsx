@@ -16,7 +16,7 @@ export const TabelaHead = () => {
             textAlign: "center",
           }}
         >
-          CNPJ
+          Documento
         </TableCell>
         <TableCell
           sx={{

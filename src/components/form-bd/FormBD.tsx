@@ -61,12 +61,16 @@ export const FormBD = () => {
       });
       const result = await response.json();
       const resposta = String(result.output);
+      console.log(resposta)
       if (resposta.includes("Duplicate entry")) {
         alert("Erro ao inserir dados: Nome do banco já foi cadastrado!");
       }
       if (result.output === "Credenciais salvas com sucesso!\n") {
         alert("Credenciais salvas com sucesso!");
         window.location.reload();
+      }
+      if (resposta.includes("Erro ao conectar ao banco de dados")) {
+        alert("Erro ao inserir dados: Uma ou mais credenciais podem estar incorretas.");
       }
     } catch (error) {
       console.error("Error:", error);

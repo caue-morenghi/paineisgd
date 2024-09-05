@@ -3,7 +3,7 @@ import { TBancoConsulta } from "../../api/usuarios/BancosService";
 import EditBD from "../form-bd/EditBD";
 import { RemoveCircle } from "@mui/icons-material";
 import Senha from "./Senha";
-import { inserirMascaraCnpj } from "../../functions/cnpj";
+import { inserirMascaraCnpj, inserirMascaraCpf } from "../../functions/cnpj";
 
 type TBancoObj = {
   banco: TBancoConsulta;
@@ -47,6 +47,14 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
     }
   };
 
+  const returnDocumento = (cnpj: string) => {
+    if (cnpj.length === 11) {
+      return inserirMascaraCpf(cnpj);
+    } else {
+      return inserirMascaraCnpj(cnpj);
+    }
+  }
+
   return (
     <TableRow sx={{ "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" } }}>
       <TableCell
@@ -61,7 +69,7 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
           textAlign: "center",
         }}
       >
-        {inserirMascaraCnpj(banco.cnpj.toString())}
+        {returnDocumento(banco.cnpj)}
       </TableCell>
       <TableCell
         sx={{

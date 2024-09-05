@@ -9,6 +9,7 @@ caminho_arquivo = Path(r'C:\Users\quaestum\Desktop\banco_dados.txt')
 
 def testar_conexao(ip, porta, usuario, senha, nome_banco):
     try:
+        print(ip)
         connection = mysql.connector.connect(
             host=ip,
             user=usuario,
@@ -18,10 +19,11 @@ def testar_conexao(ip, porta, usuario, senha, nome_banco):
             auth_plugin='mysql_native_password'
         )
         if connection.is_connected():
-            return connection
+            #return connection
+            return True
     except Error as e:
-        return str(e)
-
+        #return str(e)
+        return False
 
 def atualizar_banco(caminho_arquivo, banco_editado):
     banco_str = f"{banco_editado['id']};{banco_editado['cnpj']};{banco_editado['ip']};{banco_editado['porta']};{
@@ -88,9 +90,8 @@ def main():
         "nome_antigo": args.nome_antigo
     }
 
-    conexao_valida = testar_conexao(
-        args.ip, args.porta, args.usuario, args.senha, args.nome)
-    if isinstance(conexao_valida, str):
+    conexao_valida = testar_conexao(args.ip, args.porta, args.usuario, args.senha, args.nome)
+    if conexao_valida is not True:
         print(f"Erro ao conectar ao banco de dados")
     else:
         resultado_insercao = update_banco(banco_editado)

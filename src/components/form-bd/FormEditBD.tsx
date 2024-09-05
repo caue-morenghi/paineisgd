@@ -7,9 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import {
-  TBancoConsulta,
-} from "../../api/usuarios/BancosService";
+import { TBancoConsulta } from "../../api/usuarios/BancosService";
 import EditFormBD, { TEditBD } from "./EditFormBDhook";
 
 type TBancoObj = {
@@ -17,8 +15,7 @@ type TBancoObj = {
 };
 
 export const FormEditBD = ({ banco }: TBancoObj) => {
-  const { handleSubmit, register, setValue } =
-    EditFormBD();
+  const { handleSubmit, register, setValue, errors } = EditFormBD();
 
   const handleSetValues = useCallback(() => {
     setValue("cnpj", banco.cnpj);
@@ -28,7 +25,18 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
     setValue("senha", banco.senha);
     setValue("nome", banco.nome);
     setValue("situacao", banco.situacao);
-  }, [banco.cnpj, banco.ip, banco.porta, banco.usuario, banco.senha, banco.nome, banco.situacao, setValue]);
+    setValue("id", banco.id);
+  }, [
+    banco.cnpj,
+    banco.ip,
+    banco.porta,
+    banco.usuario,
+    banco.senha,
+    banco.nome,
+    banco.situacao,
+    setValue,
+    banco.id,
+  ]);
 
   useEffect(() => {
     handleSetValues();
@@ -36,7 +44,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
 
   const handleTeste = async (data: TEditBD) => {
     const convertedData = {
-      id: banco.id,
+      id: data.id,
       cnpj: data.cnpj,
       ip: data.ip,
       porta: data.porta,
@@ -46,7 +54,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
       nome_antigo: banco.nome,
       situacao: data.situacao,
     };
-    
+
     console.log(convertedData);
 
     try {
@@ -92,11 +100,36 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
       onSubmit={handleSubmit(handleTeste)}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
-          <Typography sx={{ fontWeight: 600 }}>CNPJ: </Typography>
-          <Tooltip title="Não é possível alterar o CNPJ">
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column", textAlign: "left", width: '45%' }}
+          >
+            <Typography sx={{ fontWeight: 600 }}>CNPJ: </Typography>
+            <Tooltip title="Não é possível alterar o CNPJ">
+              <input
+                style={{
+                  outline: "none",
+                  padding: ".5em",
+                  backgroundColor: "#fff",
+                  fontSize: "0.8rem",
+                  border: "1px solid #000",
+                }}
+                type="text"
+                {...register("cnpj")}
+                disabled
+              />
+            </Tooltip>
+            {errors.cnpj && (
+              <span style={{ color: "#b32929", fontWeight: 600, fontSize: '12px' }}>
+                {errors.cnpj.message}
+              </span>
+            )}
+          </Box>
+
+          <Box
+            sx={{ display: "flex", flexDirection: "column", textAlign: "left", width: '45%' }}
+          >
+            <Typography sx={{ fontWeight: 600 }}>IP: </Typography>
             <input
               style={{
                 outline: "none",
@@ -106,59 +139,62 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
                 border: "1px solid #000",
               }}
               type="text"
-              {...register("cnpj")}
-              disabled
+              {...register("ip")}
             />
-          </Tooltip>
+            {errors.ip && (
+              <span style={{ color: "#b32929", fontWeight: 600, fontSize: '12px' }}>
+                {errors.ip.message}
+              </span>
+            )}
+          </Box>
         </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
-          <Typography sx={{ fontWeight: 600 }}>IP: </Typography>
-          <input
-            style={{
-              outline: "none",
-              padding: ".5em",
-              backgroundColor: "#fff",
-              fontSize: "0.8rem",
-              border: "1px solid #000",
-            }}
-            type="text"
-            {...register("ip")}
-          />
+
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column", textAlign: "left", width: '45%' }}
+          >
+            <Typography sx={{ fontWeight: 600 }}>Porta: </Typography>
+            <input
+              style={{
+                outline: "none",
+                padding: ".5em",
+                backgroundColor: "#fff",
+                fontSize: "0.8rem",
+                border: "1px solid #000",
+              }}
+              type="number"
+              {...register("porta")}
+            />
+            {errors.porta && (
+              <span style={{ color: "#b32929", fontWeight: 600, fontSize: '12px' }}>
+                {errors.porta.message}
+              </span>
+            )}
+          </Box>
+          
+          <Box
+            sx={{ display: "flex", flexDirection: "column", textAlign: "left", width: '45%' }}
+          >
+            <Typography sx={{ fontWeight: 600 }}>Usuário</Typography>
+            <input
+              style={{
+                outline: "none",
+                padding: ".5em",
+                backgroundColor: "#fff",
+                fontSize: "0.8rem",
+                border: "1px solid #000",
+              }}
+              type="text"
+              {...register("usuario")}
+            />
+            {errors.usuario && (
+              <span style={{ color: "#b32929", fontWeight: 600, fontSize: '12px' }}>
+                {errors.usuario.message}
+              </span>
+            )}
+          </Box>
         </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
-          <Typography sx={{ fontWeight: 600 }}>Porta: </Typography>
-          <input
-            style={{
-              outline: "none",
-              padding: ".5em",
-              backgroundColor: "#fff",
-              fontSize: "0.8rem",
-              border: "1px solid #000",
-            }}
-            type="number"
-            {...register("porta")}
-          />
-        </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
-          <Typography sx={{ fontWeight: 600 }}>Usuário</Typography>
-          <input
-            style={{
-              outline: "none",
-              padding: ".5em",
-              backgroundColor: "#fff",
-              fontSize: "0.8rem",
-              border: "1px solid #000",
-            }}
-            type="text"
-            {...register("usuario")}
-          />
-        </Box>
+
         <Box
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
@@ -174,7 +210,13 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
             }}
             {...register("senha")}
           />
+          {errors.senha && (
+            <span style={{ color: "#b32929", fontWeight: 600, fontSize: '12px' }}>
+              {errors.senha.message}
+            </span>
+          )}
         </Box>
+
         <Box
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
@@ -190,7 +232,14 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
             }}
             {...register("nome")}
           />
+          {errors.nome && (
+            <span style={{ color: "#b32929", fontWeight: 600, fontSize: '12px' }}>
+              {errors.nome.message}
+            </span>
+          )}
+          <input type="hidden" {...register("id")} />
         </Box>
+
         <Box
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
@@ -200,10 +249,11 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
             value={situacao}
             onChange={handleChangesituacao}
           >
-            <MenuItem value={1}>Ativo</MenuItem>
-            <MenuItem value={0}>Inativo</MenuItem>
+            <MenuItem value={"1"}>Ativo</MenuItem>
+            <MenuItem value={"0"}>Inativo</MenuItem>
           </Select>
         </Box>
+
       </Box>
       <button
         style={{

@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form"
+import { editBancoSchema } from "./schemas"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 export type TEditBD = {
-    id: number
+    id: string
     cnpj: string
     ip: string
     porta: string
@@ -15,7 +17,18 @@ const EditFormBD = () => {
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<TEditBD>({
         mode: 'all',
-        criteriaMode: 'all'
+        criteriaMode: 'all',
+        resolver: zodResolver(editBancoSchema),
+        defaultValues: {
+            id: '',
+            cnpj: '',
+            ip: '',
+            porta: '',
+            usuario: '',
+            senha: '',
+            nome: '',
+            situacao: ''
+        }
     })
 
     const handleDataSubmit = (data: any) => {

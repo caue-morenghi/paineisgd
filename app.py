@@ -7,7 +7,6 @@ from pathlib import Path
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-
 @app.route('/run-script', methods=['POST'])
 def run_script():
     data = request.json
@@ -27,13 +26,11 @@ def run_script():
     )
     return jsonify({'output': result.stdout})
 
-
 @app.route('/get-bancos', methods=['GET'])
 def get_bancos():
     caminho_arquivo = r'C:\Users\quaestum\Desktop\banco_dados.txt'
     bancos = ler_bancos_txt(caminho_arquivo)
     return jsonify(bancos)
-
 
 def ler_bancos_txt(caminho_arquivo):
     bancos = []
@@ -63,7 +60,6 @@ def ler_bancos_txt(caminho_arquivo):
 
     return bancos
 
-
 @app.route('/update-banco', methods=['POST'])
 def update_banco():
     data = request.json
@@ -85,12 +81,10 @@ def update_banco():
     )
 
     response = jsonify({'output': result.stdout})
-    #response = make_response(jsonify({'message': 'Banco atualizado com sucesso!'} if result.returncode == 0 else {'error': result.stderr}), 200 if result.returncode == 0 else 500)
     response.headers.add("Access-Control-Allow-Origin", "*")
     response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
     response.headers.add("Access-Control-Allow-Methods", "POST")
     return response
-
 
 if __name__ == '__main__':
     app.run(debug=True)

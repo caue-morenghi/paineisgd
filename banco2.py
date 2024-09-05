@@ -3,6 +3,8 @@ import mysql.connector
 from mysql.connector import Error
 from pathlib import Path
 import argparse
+import datetime
+import re
 
 def salvar_credenciais_txt(id, cnpj, ip, porta, usuario, senha, nome_banco, situacao):
     file_path = Path(r'C:\Users\Quaestum\Desktop\banco_dados.txt')
@@ -37,11 +39,13 @@ def obter_maior_id(cnpj, caminho_arquivo):
     if not os.path.exists(file_path):
         return maior_id
     
+    cnpj_numerico = re.sub(r'[^\d]', '', cnpj)
+    
     with open(file_path, 'r') as file:
         linhas = file.readlines()
         for linha in linhas:
             dados = linha.strip().split(';')
-            if len(dados) == 8 and dados[1] == cnpj:
+            if len(dados) == 8 and dados[1] == cnpj_numerico:
                 id_atual = int(dados[0])
                 if id_atual > maior_id:
                     maior_id = id_atual
@@ -78,8 +82,9 @@ def main():
     parser.add_argument('--situacao', required=True, help='Situação do banco')
     args = parser.parse_args()
 
+    cnpj_numerico = re.sub(r'[^\d]', '', args.cnpj)
     caminho_arquivo = r'C:\Users\Quaestum\Desktop\banco_dados.txt'
-    maior_id = obter_maior_id(args.cnpj, caminho_arquivo)
+    maior_id = obter_maior_id(cnpj=cnpj_numerico, caminho_arquivo=caminho_arquivo)
     novo_id = maior_id + 1
 
     connection = testar_conexao(args.ip, args.porta, args.usuario, args.senha, args.nome_banco)
@@ -88,7 +93,7 @@ def main():
     else:
         resultado_insercao = inserir_dados_bd(novo_id, args.nome_banco)
         if "sucesso" in resultado_insercao:
-            salvar_credenciais_txt(novo_id, args.cnpj, args.ip, args.porta, args.usuario, args.senha, args.nome_banco, args.situacao)
+            salvar_credenciais_txt(novo_id, cnpj_numerico, args.ip, args.porta, args.usuario, args.senha, args.nome_banco, args.situacao)
             print("Credenciais salvas com sucesso!")
         else:
             print(resultado_insercao)
