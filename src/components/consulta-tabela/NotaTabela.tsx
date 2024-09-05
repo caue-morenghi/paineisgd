@@ -10,6 +10,7 @@ type TBancoObj = {
 };
 
 export const NotaTabela = ({ banco }: TBancoObj) => {
+
   const handleTeste = async (banco: TBancoConsulta) => {
     const convertedbanco = {
       id: banco.id,
@@ -21,6 +22,7 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
       nome: banco.nome,
       nome_antigo: banco.nome,
       situacao: parseInt(banco.situacao) === 1 ? 0 : 1,
+      cnpj_antigo: banco.cnpj,
     };
     console.log(convertedbanco);
 

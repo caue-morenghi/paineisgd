@@ -15,7 +15,7 @@ export type TEditBD = {
 
 const EditFormBD = () => {
 
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm<TEditBD>({
+    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<TEditBD>({
         mode: 'all',
         criteriaMode: 'all',
         resolver: zodResolver(editBancoSchema),
@@ -36,7 +36,7 @@ const EditFormBD = () => {
     }
 
     return {
-        register, handleSubmit, errors, setValue, handleDataSubmit
+        register, handleSubmit, errors, setValue, handleDataSubmit, watch
     }
 }
 

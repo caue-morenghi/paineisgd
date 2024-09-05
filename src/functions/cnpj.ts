@@ -24,3 +24,18 @@ export const filtrarIp = (ip: string) => {
 export const limitarPorta = (porta: string) => {
     return porta.slice(0, 4);
 }
+
+export const limitarCampo = (campo: string, limite: number) => {
+    return campo.slice(0, limite);
+}
+
+export const limitarPortaOpcional = (porta: string) => {
+    if (porta.length > 4) {
+        return porta.slice(0, 4);
+    }
+    return porta;
+}
+
+export const filtrarPorta = (porta: string) => {
+    return porta.replace(/\D/g, '');
+}

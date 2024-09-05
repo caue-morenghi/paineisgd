@@ -9,7 +9,6 @@ caminho_arquivo = Path(r'C:\Users\quaestum\Desktop\banco_dados.txt')
 
 def testar_conexao(ip, porta, usuario, senha, nome_banco):
     try:
-        print(ip)
         connection = mysql.connector.connect(
             host=ip,
             user=usuario,
@@ -25,7 +24,7 @@ def testar_conexao(ip, porta, usuario, senha, nome_banco):
         #return str(e)
         return False
 
-def atualizar_banco(caminho_arquivo, banco_editado):
+def atualizar_banco(caminho_arquivo, banco_editado, cnpj_antigo):
     banco_str = f"{banco_editado['id']};{banco_editado['cnpj']};{banco_editado['ip']};{banco_editado['porta']};{
         banco_editado['usuario']};{banco_editado['senha']};{banco_editado['nome']};{banco_editado['situacao']}\n"
 
@@ -38,7 +37,7 @@ def atualizar_banco(caminho_arquivo, banco_editado):
 
     with open(caminho_arquivo, 'w') as file:
         for linha in linhas:
-            if linha.startswith(f"{banco_editado['id']};{banco_editado['cnpj']};"):
+            if linha.startswith(f"{banco_editado['id']};{cnpj_antigo};"):
                 file.write(banco_str)
             else:
                 file.write(linha)
@@ -76,6 +75,7 @@ def main():
     parser.add_argument('--nome', required=True, help='Nome do banco de dados')
     parser.add_argument('--situacao', required=True, help='Situação do banco')
     parser.add_argument('--nome_antigo', required=True, help='Nome antigo do banco')
+    parser.add_argument('--cnpj_antigo', required=True, help='CNPJ antigo do banco')
     args = parser.parse_args()
 
     banco_editado = {
@@ -87,7 +87,8 @@ def main():
         "senha": args.senha,
         "nome": args.nome,
         "situacao": args.situacao,
-        "nome_antigo": args.nome_antigo
+        "nome_antigo": args.nome_antigo,
+        "cnpj_antigo": args.cnpj_antigo
     }
 
     conexao_valida = testar_conexao(args.ip, args.porta, args.usuario, args.senha, args.nome)
@@ -97,7 +98,7 @@ def main():
         resultado_insercao = update_banco(banco_editado)
         if "sucesso" in resultado_insercao:
             try:
-                atualizar_banco(caminho_arquivo, banco_editado)
+                atualizar_banco(caminho_arquivo, banco_editado, banco_editado['cnpj_antigo'])
                 print("Banco de dados atualizado com sucesso!")
             except (FileNotFoundError, ValueError) as e:
                 print(e)

@@ -5,16 +5,28 @@ import {
   filtrarIp,
   inserirMascaraCnpj,
   inserirMascaraCpf,
-  limitarPorta,
+  limitarCampo,
 } from "../../functions/cnpj";
 
 export const FormBD = () => {
-  const { handleSubmit, register, errors, watch, setValue } = FBDForm();
+  const {
+    handleSubmit,
+    register,
+    errors,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
+  } = FBDForm();
   const [documentType, setDocumentType] = useState<"cpf" | "cnpj" | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const cnpjValue = watch("cnpj");
   const ipValue = watch("ip");
   const portaValue = watch("porta");
+  const senhaValue = watch("senha");
+  const nomevalue = watch("nome");
+  const usuarioValue = watch("usuario");
 
   useEffect(() => {
     if (cnpjValue) {
@@ -25,21 +37,50 @@ export const FormBD = () => {
       setValue("cnpj", maskedValue);
     }
     if (ipValue) {
-      const filteredIp = filtrarIp(ipValue);
+      const filteredIp = limitarCampo(filtrarIp(ipValue), 30);
       setValue("ip", filteredIp);
     }
     if (portaValue) {
-      const limitedPorta = limitarPorta(portaValue);
+      const limitedPorta = limitarCampo(portaValue, 4);
       setValue("porta", limitedPorta);
     }
-  }, [portaValue, ipValue, cnpjValue, documentType, setValue]);
+    if (senhaValue) {
+      const limitedSenha = limitarCampo(senhaValue, 225);
+      setValue("senha", limitedSenha);
+    }
+    if (nomevalue) {
+      const limitedNome = limitarCampo(nomevalue, 225);
+      setValue("nome", limitedNome);
+    }
+    if (usuarioValue) {
+      const limitedUsuario = limitarCampo(usuarioValue, 225);
+      setValue("usuario", limitedUsuario);
+    }
+  }, [
+    portaValue,
+    ipValue,
+    cnpjValue,
+    documentType,
+    setValue,
+    setError,
+    clearErrors,
+    senhaValue,
+    nomevalue,
+    usuarioValue,
+  ]);
 
   const handleDocumentTypeChange = (type: "cpf" | "cnpj") => {
     setDocumentType(type);
     setValue("cnpj", "");
+    clearErrors("cnpj");
   };
 
   const handleTeste = async (data: TBDForm) => {
+    if (!documentType) {
+      alert("Por favor, selecione o tipo de documento (CPF ou CNPJ).");
+      return;
+    }
+
     const convertedData = {
       cnpj: data.cnpj,
       ip: data.ip,
@@ -52,6 +93,7 @@ export const FormBD = () => {
     console.log(convertedData);
 
     try {
+      setIsLoading(true);
       const response = await fetch("http://localhost:5000/run-script", {
         method: "POST",
         headers: {
@@ -61,19 +103,23 @@ export const FormBD = () => {
       });
       const result = await response.json();
       const resposta = String(result.output);
-      console.log(resposta)
+      console.log(resposta);
       if (resposta.includes("Duplicate entry")) {
-        alert("Erro ao inserir dados: Nome do banco já foi cadastrado!");
+        alert("Erro ao inserir dados: anco já foi cadastrado!");
       }
       if (result.output === "Credenciais salvas com sucesso!\n") {
         alert("Credenciais salvas com sucesso!");
         window.location.reload();
       }
       if (resposta.includes("Erro ao conectar ao banco de dados")) {
-        alert("Erro ao inserir dados: Uma ou mais credenciais podem estar incorretas.");
+        alert(
+          "Erro ao inserir dados: Uma ou mais credenciais podem estar incorretas."
+        );
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -112,7 +158,7 @@ export const FormBD = () => {
           <Box
             sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
           >
-            <Typography sx={{ fontWeight: 600 }}>Documento: </Typography>
+            <Typography sx={{ fontWeight: 600 }}>Documento:</Typography>
             <input
               style={{
                 outline: "none",
@@ -137,7 +183,7 @@ export const FormBD = () => {
         <Box
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
-          <Typography sx={{ fontWeight: 600 }}>IP: </Typography>
+          <Typography sx={{ fontWeight: 600 }}>IP:</Typography>
           <input
             style={{
               outline: "none",
@@ -148,6 +194,7 @@ export const FormBD = () => {
             }}
             type="text"
             {...register("ip")}
+            placeholder="127.0.0.1"
           />
           {errors.ip && (
             <span style={{ color: "#b32929", fontWeight: 600 }}>
@@ -158,7 +205,7 @@ export const FormBD = () => {
         <Box
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
-          <Typography sx={{ fontWeight: 600 }}>Porta: </Typography>
+          <Typography sx={{ fontWeight: 600 }}>Porta:</Typography>
           <input
             style={{
               outline: "none",
@@ -169,6 +216,7 @@ export const FormBD = () => {
             }}
             type="number"
             {...register("porta")}
+            placeholder="3306"
           />
           {errors.porta && (
             <span style={{ color: "#b32929", fontWeight: 600 }}>
@@ -179,7 +227,7 @@ export const FormBD = () => {
         <Box
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
-          <Typography sx={{ fontWeight: 600 }}>Usuário</Typography>
+          <Typography sx={{ fontWeight: 600 }}>Usuário:</Typography>
           <input
             style={{
               outline: "none",
@@ -200,7 +248,7 @@ export const FormBD = () => {
         <Box
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
-          <Typography sx={{ fontWeight: 600 }}>Senha</Typography>
+          <Typography sx={{ fontWeight: 600 }}>Senha:</Typography>
           <input
             style={{
               outline: "none",
@@ -221,7 +269,7 @@ export const FormBD = () => {
         <Box
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
-          <Typography sx={{ fontWeight: 600 }}>Nome BD: </Typography>
+          <Typography sx={{ fontWeight: 600 }}>Nome BD:</Typography>
           <input
             style={{
               outline: "none",
@@ -246,14 +294,21 @@ export const FormBD = () => {
           padding: ".5em",
           fontSize: "0.8rem",
           cursor: "pointer",
-          backgroundColor: "#4222f8",
+          backgroundColor: "#5f5f5f",
           color: "#fff",
           border: "none",
           marginTop: "1em",
           marginBottom: "1em",
         }}
+        type="submit"
+        onClick={() => {
+          if (!documentType) {
+            alert("Por favor, selecione o tipo de documento (CPF ou CNPJ).");
+            return;
+          }
+        }}
       >
-        Enviar
+        {isLoading ? "Aguarde, validando informações..." : "Enviar"}
       </button>
     </form>
   );

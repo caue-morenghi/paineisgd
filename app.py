@@ -74,7 +74,8 @@ def update_banco():
             '--senha', data['senha'],
             '--nome', data['nome'],
             '--situacao', str(data['situacao']),
-            '--nome_antigo', data['nome_antigo']
+            '--nome_antigo', data['nome_antigo'],
+            '--cnpj_antigo', data['cnpj_antigo']
         ],
         capture_output=True,
         text=True

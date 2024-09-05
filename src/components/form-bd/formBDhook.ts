@@ -14,7 +14,7 @@ export type TBDForm = {
 
 const FBDForm = () => {
 
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<TBDForm>({
+    const { register, handleSubmit, formState: { errors }, setValue, watch, setError, clearErrors } = useForm<TBDForm>({
         mode: 'all',
         criteriaMode: 'all',
         resolver: zodResolver(registroBanco),
@@ -34,7 +34,7 @@ const FBDForm = () => {
     }
 
     return {
-        register, handleSubmit, errors, setValue, handleDataSubmit, watch
+        register, handleSubmit, errors, setValue, handleDataSubmit, watch, setError, clearErrors
     }
 }
 
