@@ -1,4 +1,4 @@
-import { Box, MenuItem, Select, SelectChangeEvent, Typography, IconButton } from "@mui/material";
+import { Box, MenuItem, Select, SelectChangeEvent, Typography, IconButton, Snackbar, Alert } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { TBancoConsulta } from "../../api/usuarios/BancosService";
 import EditFormBD, { TEditBD } from "./EditFormBDhook";
@@ -18,6 +18,9 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setisLoading] = useState(false);
   const [situacao, setsituacao] = useState(banco.situacao);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "warning" | "error">("success");
 
   const ipValue = watch("ip");
   const portaValue = watch("porta");
@@ -83,10 +86,14 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
   const handleDataSubmit = async (data: TEditBD) => {
 
     if (isCNPJ && cnpjvalue.length !== 18) {
-      alert("CNPJ inválido! Por favor, digita novamente");
+      setSnackbarMessage("CNPJ inválido! Por favor, digite novamente.");
+      setSnackbarSeverity("warning");
+      setSnackbarOpen(true);
       return;
     } else if (!isCNPJ && cnpjvalue.length !== 14) {
-      alert("CPF inválido! Por favor, digita novamente");
+      setSnackbarMessage("CPF inválido! Por favor, digite novamente.");
+      setSnackbarSeverity("warning");
+      setSnackbarOpen(true);
       return;
     }
 
@@ -115,21 +122,28 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
       const result = await response.json();
       const resposta = String(result.output);
       if (resposta.includes("sucesso")) {
-        alert("Banco atualizado com sucesso!");
-        window.location.reload();
+        setSnackbarMessage("Banco atualizado com sucesso!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
       if (resposta.includes("Erro ao conectar ao banco de dados")) {
-        alert(
-          "Erro ao atualizar banco de dados. Uma ou mais credenciais podem estar incorretas."
-        );
+        setSnackbarMessage("Erro ao atualizar banco de dados. Uma ou mais credenciais podem estar incorretas.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
       }
       if (resposta.includes("Duplicate entry")) {
-        alert(
-          "Erro ao atualizar banco de dados. Nome do banco já está cadastrado."
-        );
+        setSnackbarMessage("Erro ao atualizar banco de dados. Nome do banco já está cadastrado.");
+        setSnackbarSeverity("warning");
+        setSnackbarOpen(true);
       }
     } catch (error) {
       console.error("Error:", error);
+      setSnackbarMessage("Erro ao processar a solicitação.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     } finally {
       setisLoading(false);
     }
@@ -144,115 +158,137 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
   useEffect(() => { if (nomevalue) { const limitedNome = limitarCampo(nomevalue, 225); setValue("nome", limitedNome)}}, [nomevalue, setValue]);
   useEffect(() => { if (usuarioValue) { const limitedUsuario = limitarCampo(usuarioValue, 225); setValue("usuario", limitedUsuario)}}, [usuarioValue, setValue]);
 
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <form style={{ display: "flex", flexDirection: "column", textAlign: "left", justifyContent: "space-between", width: "100%" }} onSubmit={handleSubmit(handleDataSubmit)}>
-      <ContainerBD>
-          <GridFormEditBD>
-              <CampoGridFormEditBD>
+    <>
+      <form style={{ display: "flex", flexDirection: "column", textAlign: "left", justifyContent: "space-between", width: "100%" }} onSubmit={handleSubmit(handleDataSubmit)}>
+        <ContainerBD>
+            <GridFormEditBD>
+                <CampoGridFormEditBD>
 
-                <Typography sx={{ fontWeight: 600 }}>Documento:</Typography>
+                  <Typography sx={{ fontWeight: 600 }}>Documento:</Typography>
 
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    <input type="checkbox" checked={isCNPJ} onChange={() => handleCheckboxChange(true)} />
-                    CNPJ
-                  </label>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                      <input type="checkbox" checked={isCNPJ} onChange={() => handleCheckboxChange(true)} />
+                      CNPJ
+                    </label>
 
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    <input type="checkbox" checked={!isCNPJ} onChange={() => handleCheckboxChange(false)} />
-                    CPF
-                  </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                      <input type="checkbox" checked={!isCNPJ} onChange={() => handleCheckboxChange(false)} />
+                      CPF
+                    </label>
 
-                </Box>
-                <input 
-                  style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
-                  type="text"
-                  {...register("cnpj")}
-                  onChange={handleDocumentoChange}
-                />
-                {errors.cnpj && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}> {errors.cnpj.message}</span>}
+                  </Box>
+                  <input 
+                    style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
+                    type="text"
+                    {...register("cnpj")}
+                    onChange={handleDocumentoChange}
+                  />
+                  {errors.cnpj && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}> {errors.cnpj.message}</span>}
+                </CampoGridFormEditBD>
+
+                <CampoGridFormEditBD>
+                  <Typography sx={{ fontWeight: 600 }}>IP:</Typography>
+                  <input 
+                    style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
+                    type="text"
+                    {...register("ip")}
+                    placeholder="127.0.0.1"
+                  />
+                  {errors.ip && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.ip.message}</span>}
+                </CampoGridFormEditBD>
+            </GridFormEditBD>
+
+            <GridFormEditBD>
+                <CampoGridFormEditBD>
+                  <Typography sx={{ fontWeight: 600 }}>Porta:</Typography>
+                  <input 
+                    style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
+                    type="text"
+                    {...register("porta")}
+                    placeholder="3306"
+                  />
+                  {errors.porta && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.porta.message}</span>}
               </CampoGridFormEditBD>
 
               <CampoGridFormEditBD>
-                <Typography sx={{ fontWeight: 600 }}>IP:</Typography>
+                <Typography sx={{ fontWeight: 600 }}>Usuário:</Typography>
                 <input 
-                  style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
-                  type="text"
-                  {...register("ip")}
-                  placeholder="127.0.0.1"
+                  style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2"}} 
+                  type="text" 
+                  {...register("usuario")}
                 />
-                {errors.ip && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.ip.message}</span>}
+                {errors.usuario && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.usuario.message}</span>}
               </CampoGridFormEditBD>
-          </GridFormEditBD>
+            </GridFormEditBD>
 
-          <GridFormEditBD>
-              <CampoGridFormEditBD>
-                <Typography sx={{ fontWeight: 600 }}>Porta:</Typography>
+            <CampoBD>
+              <Typography sx={{ fontWeight: 600 }}>Senha:</Typography>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
                 <input 
-                  style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
-                  type="text"
-                  {...register("porta")}
-                  placeholder="3306"
+                  required
+                  style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2", flex: 1 }}
+                  type={showPassword ? "text" : "password"}
+                  {...register("senha")}
                 />
-                {errors.porta && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.porta.message}</span>}
-            </CampoGridFormEditBD>
+                <IconButton onClick={toggleShowPassword}>
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </Box>
+              {errors.senha && (
+                <span
+                  style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}
+                >
+                  {errors.senha.message}
+                </span>
+              )}
+            </CampoBD>
 
-            <CampoGridFormEditBD>
-              <Typography sx={{ fontWeight: 600 }}>Usuário:</Typography>
-              <input 
-                style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2"}} 
-                type="text" 
-                {...register("usuario")}
-              />
-              {errors.usuario && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.usuario.message}</span>}
-            </CampoGridFormEditBD>
-          </GridFormEditBD>
-
-          <CampoBD>
-            <Typography sx={{ fontWeight: 600 }}>Senha:</Typography>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <input 
+            <CampoBD>
+              <Typography sx={{ fontWeight: 600 }}>Nome BD:</Typography>
+              <input
                 required
-                style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2", flex: 1 }}
-                type={showPassword ? "text" : "password"}
-                {...register("senha")}
+                style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
+                {...register("nome")}
               />
-              <IconButton onClick={toggleShowPassword}>
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </Box>
-            {errors.senha && (
-              <span
-                style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}
-              >
-                {errors.senha.message}
-              </span>
-            )}
-          </CampoBD>
+              {errors.nome && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.nome.message}</span>}
+              <input type="hidden" {...register("id")} />
+            </CampoBD>
 
-          <CampoBD>
-            <Typography sx={{ fontWeight: 600 }}>Nome BD:</Typography>
-            <input
-              required
-              style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
-              {...register("nome")}
-            />
-            {errors.nome && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.nome.message}</span>}
-            <input type="hidden" {...register("id")} />
-          </CampoBD>
+            <CampoBD>
+              <Typography sx={{ fontWeight: 600 }}>Situação:</Typography>
+              <Select {...register("situacao")} value={situacao} onChange={handleChangesituacao}>
+                <MenuItem value={"1"}>Ativo</MenuItem>
+                <MenuItem value={"0"}>Inativo</MenuItem>
+              </Select>
+            </CampoBD>
+        </ContainerBD>
 
-          <CampoBD>
-            <Typography sx={{ fontWeight: 600 }}>Situação:</Typography>
-            <Select {...register("situacao")} value={situacao} onChange={handleChangesituacao}>
-              <MenuItem value={"1"}>Ativo</MenuItem>
-              <MenuItem value={"0"}>Inativo</MenuItem>
-            </Select>
-          </CampoBD>
-      </ContainerBD>
-
-      <ButtonFormEditBD>
-        {isLoading ? "Aguarde, validando alterações..." : "Salvar alterações"}
-      </ButtonFormEditBD>
-    </form>
+        <ButtonFormEditBD>
+          {isLoading ? "Aguarde, validando alterações..." : "Salvar alterações"}
+        </ButtonFormEditBD>
+      </form>
+      <Snackbar
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      onClose={handleSnackbarClose}
+      sx={{ width: '90%' }}
+    >
+      <Alert
+        onClose={handleSnackbarClose}
+        severity={snackbarSeverity}
+        variant="filled"
+        sx={{ width: '100%' }}
+      >
+        {snackbarMessage}
+      </Alert>
+    </Snackbar>
+    </>
   );
 };
