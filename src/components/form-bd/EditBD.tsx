@@ -5,7 +5,7 @@ import Modal from "@mui/material/Modal";
 import { Edit } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { FormEditBD } from "./FormEditBD";
-import { TBanco, TBancoConsulta } from "../../api/usuarios/BancosService";
+import { TBancoConsulta } from "../../api/usuarios/BancosService";
 
 const style = {
   position: "absolute" as "absolute",
@@ -34,18 +34,10 @@ export default function EditBD({ banco }: TBancoObj) {
           <Edit />
         </IconButton>
       </Tooltip>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Box sx={style}>
           <Typography>Alterar </Typography>
-          <FormEditBD 
-            banco={banco}
-            key={banco.id}
-          />
+          <FormEditBD banco={banco} key={banco.id}/>
         </Box>
       </Modal>
     </div>

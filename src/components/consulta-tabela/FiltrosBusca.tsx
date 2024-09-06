@@ -34,6 +34,7 @@ export default function FiltrosBusca({
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
+        sx={{ fontWeight: 700 }}
       >
         Filtros
       </Button>

@@ -35,21 +35,9 @@ export default function Senha({ senha }: TSenhaProps) {
           <Visibility />
         </IconButton>
       </Tooltip>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Box sx={style}>
-          <Typography
-            sx={{
-              flexWrap: "wrap",
-              overflow: "auto"
-            }}
-          >
-            {senha}
-          </Typography>
+          <Typography sx={{ flexWrap: "wrap", overflow: "auto" }}>{senha}</Typography>
         </Box>
       </Modal>
     </div>

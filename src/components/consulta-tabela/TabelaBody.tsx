@@ -1,8 +1,8 @@
 import { TableBody } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { NotaTabela } from "./NotaTabela";
 import { TBancoConsulta } from "../../api/usuarios/BancosService";
+import { BancoDados } from "./BancoDados";
 
 interface TabelaBodyProps {
     termoBusca: { [key: string]: string };
@@ -47,7 +47,7 @@ export const TabelaBody = ({ termoBusca }: TabelaBodyProps) => {
     return (
         <TableBody>
             {bancosFiltrados.map(banco => (
-                <NotaTabela 
+                <BancoDados 
                     banco={banco}
                     key={banco.nome}
                 />

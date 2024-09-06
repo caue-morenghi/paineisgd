@@ -4,12 +4,9 @@ import { TabelaHead } from "./TabelaHead";
 import { TabelaBody } from "./TabelaBody";
 import FiltrosBusca from "./FiltrosBusca";
 
-export const TabelaConsultaNFs = () => {
+export const TabelaConsultaBancos = () => {
     const [termoBusca, setTermoBusca] = useState<{ [key: string]: string }>({});
-    const [camposFiltro, setCamposFiltro] = useState<{ [key: string]: boolean }>({
-        nome: false,
-        usuario: false,
-    });
+    const [camposFiltro, setCamposFiltro] = useState<{ [key: string]: boolean }>({ nome: false, usuario: false });
 
     const handleCheckboxChange = (campo: string) => {
         setCamposFiltro(prev => ({ ...prev, [campo]: !prev[campo] }));
@@ -22,12 +19,7 @@ export const TabelaConsultaNFs = () => {
 
     return (
         <Box sx={{ marginBottom: '2em', display: 'flex', flexDirection: 'column' }}>
-            <FiltrosBusca
-                camposFiltro={camposFiltro}
-                termoBusca={termoBusca}
-                handleCheckboxChange={handleCheckboxChange}
-                handleInputChange={handleInputChange}
-            />
+            <FiltrosBusca camposFiltro={camposFiltro} termoBusca={termoBusca} handleCheckboxChange={handleCheckboxChange} handleInputChange={handleInputChange}/>
             <TableContainer>
                 <Table>
                     <TabelaHead />

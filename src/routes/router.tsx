@@ -1,9 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { App } from "../App";
-import { SelecionarNF } from "../pages/SelecionarNF";
 import { Menu } from "../pages/Menu";
-import { RecebimentoNF } from "../pages/RecebimentoNF";
-import { ConsultaNF } from "../pages/ConsultaNF";
+import { ConsultaBancos } from "../pages/ConsultaBancos";
+import { ConfiguracaoBanco } from "../pages/ConfiguracaoBanco";
 
 export const router = createBrowserRouter([
   {
@@ -11,20 +10,16 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/selecionarnf',
-        element: <SelecionarNF />
+        path: '/configuracaobanco',
+        element: <ConfiguracaoBanco />
       }, 
       {
         path: '/menu',
         element: <Menu />
       },
       {
-        path: '/recebimentonf',
-        element: <RecebimentoNF />
-      },
-      {
-        path: 'consultarnf',
-        element: <ConsultaNF />
+        path: 'consultabancos',
+        element: <ConsultaBancos />
       }
     ]
   },

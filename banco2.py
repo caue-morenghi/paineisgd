@@ -4,7 +4,6 @@ import mysql.connector
 from mysql.connector import Error
 from pathlib import Path
 import argparse
-import datetime
 import re
 
 def salvar_credenciais_txt(id, cnpj, ip, porta, usuario, senha, nome_banco, situacao):

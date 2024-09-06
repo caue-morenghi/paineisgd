@@ -1,22 +1,11 @@
-import {
-  Box,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Typography,
-  IconButton,
-} from "@mui/material";
+import { Box, MenuItem, Select, SelectChangeEvent, Typography, IconButton } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { TBancoConsulta } from "../../api/usuarios/BancosService";
 import EditFormBD, { TEditBD } from "./EditFormBDhook";
-import {
-  filtrarIp,
-  inserirMascaraCnpj,
-  inserirMascaraCpf,
-  limitarCampo,
-} from "../../functions/cnpj";
+import { filtrarIp, inserirMascaraCnpj, inserirMascaraCpf, limitarCampo, removerLetras } from "../../functions/regexmasks";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { ButtonFormEditBD, CampoBD, CampoGridFormEditBD, ContainerBD, GridFormEditBD } from "../../styles/form-bd/StylesFormEditBD";
 
 type TBancoObj = {
   banco: TBancoConsulta;
@@ -27,6 +16,23 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
 
   const [isCNPJ, setIsCNPJ] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
+  const [situacao, setsituacao] = useState(banco.situacao);
+
+  const ipValue = watch("ip");
+  const portaValue = watch("porta");
+  const senhaValue = watch("senha");
+  const nomevalue = watch("nome");
+  const usuarioValue = watch("usuario");
+  const cnpjvalue = watch("cnpj");
+
+  const handleChangesituacao = (event: SelectChangeEvent) => {
+    setsituacao(event.target.value as string);
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleDocumentoChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -74,56 +80,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
     banco.id,
   ]);
 
-  const ipValue = watch("ip");
-  const portaValue = watch("porta");
-  const senhaValue = watch("senha");
-  const nomevalue = watch("nome");
-  const usuarioValue = watch("usuario");
-
-  useEffect(() => {
-    handleSetValues();
-  }, [handleSetValues]);
-
-  useEffect(() => {
-    if (portaValue) {
-      const limitedPorta = removerLetras(limitarCampo(portaValue, 4));
-      setValue("porta", limitedPorta);
-    }
-  }, [portaValue, setValue]);
-
-  useEffect(() => {
-    if (ipValue) {
-      const filteredIp = limitarCampo(filtrarIp(ipValue), 30);
-      setValue("ip", filteredIp);
-    }
-  }, [ipValue, setValue]);
-
-  useEffect(() => {
-    if (senhaValue) {
-      const limitedSenha = limitarCampo(senhaValue, 225);
-      setValue("senha", limitedSenha);
-    }
-  }, [senhaValue, setValue]);
-
-  useEffect(() => {
-    if (nomevalue) {
-      const limitedNome = limitarCampo(nomevalue, 225);
-      setValue("nome", limitedNome);
-    }
-  }, [nomevalue, setValue]);
-
-  useEffect(() => {
-    if (usuarioValue) {
-      const limitedUsuario = limitarCampo(usuarioValue, 225);
-      setValue("usuario", limitedUsuario);
-    }
-  }, [usuarioValue, setValue]);
-
-  const [isLoading, setisLoading] = useState(false);
-
-  const cnpjvalue = watch("cnpj");
-
-  const handleTeste = async (data: TEditBD) => {
+  const handleDataSubmit = async (data: TEditBD) => {
 
     if (isCNPJ && cnpjvalue.length !== 18) {
       alert("CNPJ inválido! Por favor, digita novamente");
@@ -146,8 +103,6 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
       situacao: data.situacao,
     };
 
-    console.log(convertedData);
-
     try {
       setisLoading(true);
       const response = await fetch("http://localhost:5000/update-banco", {
@@ -158,9 +113,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
         body: JSON.stringify(convertedData),
       });
       const result = await response.json();
-      console.log(result);
       const resposta = String(result.output);
-      console.log(resposta);
       if (resposta.includes("sucesso")) {
         alert("Banco atualizado com sucesso!");
         window.location.reload();
@@ -182,276 +135,124 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
     }
   };
 
-  const [situacao, setsituacao] = useState(banco.situacao);
-  const handleChangesituacao = (event: SelectChangeEvent) => {
-    setsituacao(event.target.value as string);
-  };
-
-  const removerLetras = (value: string) => {
-    return value.replace(/[^0-9]/g, "");
-  };
-
-  const handleSenhaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = removerLetras(event.target.value);
-    setValue("senha", value);
-  };
-
-  const toggleShowPassword = () => {
-    setShowPassword((prev) => !prev);
-  };
+  useEffect(() => {
+    handleSetValues();
+  }, [handleSetValues]);
+  useEffect(() => { if (portaValue) { const limitedPorta = removerLetras(limitarCampo(portaValue, 4)); setValue("porta", limitedPorta)}}, [portaValue, setValue]);
+  useEffect(() => { if (ipValue) { const filteredIp = limitarCampo(filtrarIp(ipValue), 30); setValue("ip", filteredIp)}}, [ipValue, setValue]);
+  useEffect(() => { if (senhaValue) { const limitedSenha = limitarCampo(senhaValue, 225); setValue("senha", limitedSenha)}}, [senhaValue, setValue]);
+  useEffect(() => { if (nomevalue) { const limitedNome = limitarCampo(nomevalue, 225); setValue("nome", limitedNome)}}, [nomevalue, setValue]);
+  useEffect(() => { if (usuarioValue) { const limitedUsuario = limitarCampo(usuarioValue, 225); setValue("usuario", limitedUsuario)}}, [usuarioValue, setValue]);
 
   return (
-    <form
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        textAlign: "left",
-        justifyContent: "space-between",
-        width: "100%",
-      }}
-      onSubmit={handleSubmit(handleTeste)}
-    >
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "left",
-              width: "45%",
-            }}
-          >
-            <Typography sx={{ fontWeight: 600 }}>Documento:</Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <input
-                  type="checkbox"
-                  checked={isCNPJ}
-                  onChange={() => handleCheckboxChange(true)}
+    <form style={{ display: "flex", flexDirection: "column", textAlign: "left", justifyContent: "space-between", width: "100%" }} onSubmit={handleSubmit(handleDataSubmit)}>
+      <ContainerBD>
+          <GridFormEditBD>
+              <CampoGridFormEditBD>
+
+                <Typography sx={{ fontWeight: 600 }}>Documento:</Typography>
+
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <input type="checkbox" checked={isCNPJ} onChange={() => handleCheckboxChange(true)} />
+                    CNPJ
+                  </label>
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <input type="checkbox" checked={!isCNPJ} onChange={() => handleCheckboxChange(false)} />
+                    CPF
+                  </label>
+
+                </Box>
+                <input 
+                  style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
+                  type="text"
+                  {...register("cnpj")}
+                  onChange={handleDocumentoChange}
                 />
-                CNPJ
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <input
-                  type="checkbox"
-                  checked={!isCNPJ}
-                  onChange={() => handleCheckboxChange(false)}
+                {errors.cnpj && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}> {errors.cnpj.message}</span>}
+              </CampoGridFormEditBD>
+
+              <CampoGridFormEditBD>
+                <Typography sx={{ fontWeight: 600 }}>IP:</Typography>
+                <input 
+                  style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
+                  type="text"
+                  {...register("ip")}
+                  placeholder="127.0.0.1"
                 />
-                CPF
-              </label>
+                {errors.ip && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.ip.message}</span>}
+              </CampoGridFormEditBD>
+          </GridFormEditBD>
+
+          <GridFormEditBD>
+              <CampoGridFormEditBD>
+                <Typography sx={{ fontWeight: 600 }}>Porta:</Typography>
+                <input 
+                  style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
+                  type="text"
+                  {...register("porta")}
+                  placeholder="3306"
+                />
+                {errors.porta && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.porta.message}</span>}
+            </CampoGridFormEditBD>
+
+            <CampoGridFormEditBD>
+              <Typography sx={{ fontWeight: 600 }}>Usuário:</Typography>
+              <input 
+                style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2"}} 
+                type="text" 
+                {...register("usuario")}
+              />
+              {errors.usuario && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.usuario.message}</span>}
+            </CampoGridFormEditBD>
+          </GridFormEditBD>
+
+          <CampoBD>
+            <Typography sx={{ fontWeight: 600 }}>Senha:</Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <input 
+                required
+                style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2", flex: 1 }}
+                type={showPassword ? "text" : "password"}
+                {...register("senha")}
+              />
+              <IconButton onClick={toggleShowPassword}>
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
             </Box>
-            <input
-              style={{
-                outline: "none",
-                padding: ".5em",
-                backgroundColor: "#fff",
-                fontSize: "0.8rem",
-                border: "1px solid #c2c2c2",
-              }}
-              type="text"
-              {...register("cnpj")}
-              onChange={handleDocumentoChange}
-            />
-            {errors.cnpj && (
+            {errors.senha && (
               <span
                 style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}
               >
-                {errors.cnpj.message}
+                {errors.senha.message}
               </span>
             )}
-          </Box>
+          </CampoBD>
 
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "left",
-              width: "45%",
-            }}
-          >
-            <Typography sx={{ fontWeight: 600 }}>IP:</Typography>
-            <input
-              style={{
-                outline: "none",
-                padding: ".5em",
-                backgroundColor: "#fff",
-                fontSize: "0.8rem",
-                border: "1px solid #c2c2c2",
-              }}
-              type="text"
-              {...register("ip")}
-              placeholder="127.0.0.1"
-            />
-            {errors.ip && (
-              <span
-                style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}
-              >
-                {errors.ip.message}
-              </span>
-            )}
-          </Box>
-        </Box>
-
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "left",
-              width: "45%",
-            }}
-          >
-            <Typography sx={{ fontWeight: 600 }}>Porta:</Typography>
-            <input
-              style={{
-                outline: "none",
-                padding: ".5em",
-                backgroundColor: "#fff",
-                fontSize: "0.8rem",
-                border: "1px solid #c2c2c2",
-              }}
-              type="text"
-              {...register("porta")}
-              placeholder="3306"
-            />
-            {errors.porta && (
-              <span
-                style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}
-              >
-                {errors.porta.message}
-              </span>
-            )}
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "left",
-              width: "45%",
-            }}
-          >
-            <Typography sx={{ fontWeight: 600 }}>Usuário:</Typography>
-            <input
-              style={{
-                outline: "none",
-                padding: ".5em",
-                backgroundColor: "#fff",
-                fontSize: "0.8rem",
-                border: "1px solid #c2c2c2",
-              }}
-              type="text"
-              {...register("usuario")}
-            />
-            {errors.usuario && (
-              <span
-                style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}
-              >
-                {errors.usuario.message}
-              </span>
-            )}
-          </Box>
-        </Box>
-
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
-          <Typography sx={{ fontWeight: 600 }}>Senha:</Typography>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <CampoBD>
+            <Typography sx={{ fontWeight: 600 }}>Nome BD:</Typography>
             <input
               required
-              style={{
-                outline: "none",
-                padding: ".5em",
-                backgroundColor: "#fff",
-                fontSize: "0.8rem",
-                border: "1px solid #c2c2c2",
-                flex: 1,
-              }}
-              type={showPassword ? "text" : "password"}
-              {...register("senha")}
-              onChange={handleSenhaChange}
+              style={{ outline: "none", padding: ".5em", backgroundColor: "#fff", fontSize: "0.8rem", border: "1px solid #c2c2c2" }}
+              {...register("nome")}
             />
-            <IconButton onClick={toggleShowPassword}>
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </Box>
-          {errors.senha && (
-            <span
-              style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}
-            >
-              {errors.senha.message}
-            </span>
-          )}
-        </Box>
+            {errors.nome && <span style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}>{errors.nome.message}</span>}
+            <input type="hidden" {...register("id")} />
+          </CampoBD>
 
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
-          <Typography sx={{ fontWeight: 600 }}>Nome BD:</Typography>
-          <input
-            required
-            style={{
-              outline: "none",
-              padding: ".5em",
-              backgroundColor: "#fff",
-              fontSize: "0.8rem",
-              border: "1px solid #c2c2c2",
-            }}
-            {...register("nome")}
-          />
-          {errors.nome && (
-            <span
-              style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}
-            >
-              {errors.nome.message}
-            </span>
-          )}
-          <input type="hidden" {...register("id")} />
-        </Box>
+          <CampoBD>
+            <Typography sx={{ fontWeight: 600 }}>Situação:</Typography>
+            <Select {...register("situacao")} value={situacao} onChange={handleChangesituacao}>
+              <MenuItem value={"1"}>Ativo</MenuItem>
+              <MenuItem value={"0"}>Inativo</MenuItem>
+            </Select>
+          </CampoBD>
+      </ContainerBD>
 
-        <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
-        >
-          <Typography sx={{ fontWeight: 600 }}>Situação:</Typography>
-          <Select
-            {...register("situacao")}
-            value={situacao}
-            onChange={handleChangesituacao}
-          >
-            <MenuItem value={"1"}>Ativo</MenuItem>
-            <MenuItem value={"0"}>Inativo</MenuItem>
-          </Select>
-        </Box>
-      </Box>
-
-      <button
-        style={{
-          border: "none",
-          padding: ".5em",
-          fontSize: "1.05rem",
-          cursor: "pointer",
-          backgroundColor: "#5f5f5f",
-          color: "#fff",
-          marginTop: "1em",
-        }}
-      >
+      <ButtonFormEditBD>
         {isLoading ? "Aguarde, validando alterações..." : "Salvar alterações"}
-      </button>
+      </ButtonFormEditBD>
     </form>
   );
 };
