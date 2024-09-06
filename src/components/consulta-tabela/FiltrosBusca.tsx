@@ -2,7 +2,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Box, FormControlLabel, Checkbox, TextField } from '@mui/material';
+import { FormControlLabel, Checkbox, TextField } from '@mui/material';
 
 interface FiltrosBuscaProps {
   camposFiltro: { [key: string]: boolean };

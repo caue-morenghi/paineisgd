@@ -60,13 +60,13 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
 
   return (
     <TableRow sx={{ "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" } }}>
-      <TableCell
+      {/* <TableCell
         sx={{
           textAlign: "center",
         }}
       >
         {banco.id}
-      </TableCell>
+      </TableCell> */}
       <TableCell
         sx={{
           textAlign: "center",

@@ -22,7 +22,7 @@ export const TabelaBody = ({ termoBusca }: TabelaBodyProps) => {
                     setVazio(true);
                 }
                 setBancos(bancos);
-                setBancosFiltrados(bancos); // Inicializa com todos os bancos
+                setBancosFiltrados(bancos);
             } catch (error) {
                 console.error("Erro ao buscar bancos de dados:", error);
                 setVazio(true);
