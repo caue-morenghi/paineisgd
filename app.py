@@ -28,7 +28,7 @@ def run_script():
 
 @app.route('/get-bancos', methods=['GET'])
 def get_bancos():
-    caminho_arquivo = r'C:\Users\quaestum\Desktop\banco_dados.txt'
+    caminho_arquivo = r'C:\Users\Quaestum\Desktop\banco_dados.txt'
     bancos = ler_bancos_txt(caminho_arquivo)
     return jsonify(bancos)
 
@@ -65,7 +65,7 @@ def update_banco():
     data = request.json
     result = subprocess.run(
         [
-            'python', 'edicaoBD.py',
+            'python', 'edicaobd.py',
             '--id', data['id'],
             '--cnpj', data['cnpj'],
             '--ip', data['ip'],

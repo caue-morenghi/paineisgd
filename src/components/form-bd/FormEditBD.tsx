@@ -9,7 +9,12 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { TBancoConsulta } from "../../api/usuarios/BancosService";
 import EditFormBD, { TEditBD } from "./EditFormBDhook";
-import { filtrarIp, limitarCampo } from "../../functions/cnpj";
+import {
+  filtrarIp,
+  inserirMascaraCnpj,
+  inserirMascaraCpf,
+  limitarCampo,
+} from "../../functions/cnpj";
 
 type TBancoObj = {
   banco: TBancoConsulta;
@@ -18,8 +23,35 @@ type TBancoObj = {
 export const FormEditBD = ({ banco }: TBancoObj) => {
   const { handleSubmit, register, setValue, errors, watch } = EditFormBD();
 
+  const [isCNPJ, setIsCNPJ] = useState(true);
+
+  const handleDocumentoChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value;
+    if (isCNPJ) {
+      setValue("cnpj", inserirMascaraCnpj(value));
+    } else {
+      setValue("cnpj", inserirMascaraCpf(value));
+    }
+  };
+
+  const handleCheckboxChange = (isCNPJSelected: boolean) => {
+    setIsCNPJ(isCNPJSelected);
+    setValue("cnpj", "");
+  };
+
   const handleSetValues = useCallback(() => {
-    setValue("cnpj", banco.cnpj);
+    const documento = banco.cnpj;
+    if (documento.length === 11) {
+      setIsCNPJ(false);
+      setValue("cnpj", inserirMascaraCpf(documento));
+    } else if (documento.length === 14) {
+      setIsCNPJ(true);
+      setValue("cnpj", inserirMascaraCnpj(documento));
+    } else {
+      setValue("cnpj", documento);
+    }
     setValue("ip", banco.ip);
     setValue("porta", banco.porta);
     setValue("usuario", banco.usuario);
@@ -27,7 +59,17 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
     setValue("nome", banco.nome);
     setValue("situacao", banco.situacao);
     setValue("id", banco.id);
-  }, [banco.cnpj, banco.ip, banco.porta, banco.usuario, banco.senha, banco.nome, banco.situacao, setValue, banco.id]);
+  }, [
+    banco.cnpj,
+    banco.ip,
+    banco.porta,
+    banco.usuario,
+    banco.senha,
+    banco.nome,
+    banco.situacao,
+    setValue,
+    banco.id,
+  ]);
 
   const ipValue = watch("ip");
   const portaValue = watch("porta");
@@ -102,6 +144,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
         body: JSON.stringify(convertedData),
       });
       const result = await response.json();
+      console.log(result);
       const resposta = String(result.output);
       console.log(resposta);
       if (resposta.includes("sucesso")) {
@@ -158,18 +201,37 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
               width: "45%",
             }}
           >
-            <Typography sx={{ fontWeight: 600 }}>CNPJ:</Typography>
-              <input
-                style={{
-                  outline: "none",
-                  padding: ".5em",
-                  backgroundColor: "#fff",
-                  fontSize: "0.8rem",
-                  border: "1px solid #c2c2c2",
-                }}
-                type="text"
-                {...register("cnpj")}
-              />
+            <Typography sx={{ fontWeight: 600 }}>Documento:</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={isCNPJ}
+                  onChange={() => handleCheckboxChange(true)}
+                />
+                CNPJ
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={!isCNPJ}
+                  onChange={() => handleCheckboxChange(false)}
+                />
+                CPF
+              </label>
+            </Box>
+            <input
+              style={{
+                outline: "none",
+                padding: ".5em",
+                backgroundColor: "#fff",
+                fontSize: "0.8rem",
+                border: "1px solid #c2c2c2",
+              }}
+              type="text"
+              {...register("cnpj")}
+              onChange={handleDocumentoChange}
+            />
             {errors.cnpj && (
               <span
                 style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}

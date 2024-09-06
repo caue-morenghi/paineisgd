@@ -35,6 +35,7 @@ export const NotaTabela = ({ banco }: TBancoObj) => {
         body: JSON.stringify(convertedbanco),
       });
       const result = await response.json();
+      console.log(result)
       const resposta = String(result.output)
       console.log(resposta)
       if (resposta.includes('sucesso')) {

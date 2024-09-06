@@ -93,6 +93,7 @@ def main():
         print(f"Erro ao conectar ao banco de dados: {connection}")
     else:
         resultado_insercao = inserir_dados_bd(novo_id, args.nome_banco)
+        print(resultado_insercao)
         if "sucesso" in resultado_insercao:
             salvar_credenciais_txt(novo_id, cnpj_numerico, args.ip, args.porta, args.usuario, args.senha, args.nome_banco, args.situacao)
             print("Credenciais salvas com sucesso!")

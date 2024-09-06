@@ -29,8 +29,8 @@ export default function FiltrosBusca({
   return (
     <div style={{ alignSelf: 'flex-start' }}>
       <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
+        id="demo-positioned-button"
+        aria-controls={open ? 'demo-positioned-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
@@ -38,36 +38,49 @@ export default function FiltrosBusca({
         Filtros
       </Button>
       <Menu
-        id="basic-menu"
+        id="demo-positioned-menu"
+        aria-labelledby="demo-positioned-button"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
         }}
-
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
       >
         <MenuItem sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <FormControlLabel
-              control={<Checkbox checked={camposFiltro.nome} onChange={() => handleCheckboxChange('nome')} />}
-              label="Nome do Banco"
-            />
-            <FormControlLabel
-              control={<Checkbox checked={camposFiltro.usuario} onChange={() => handleCheckboxChange('usuario')} />}
-              label="Usuário"
-            />
-            {Object.keys(camposFiltro).map(campo => (
-              camposFiltro[campo] && (
-                <TextField
-                  key={campo}
-                  label={`Buscar por ${campo}`}
-                  variant="filled"
-                  value={termoBusca[campo]}
-                  onChange={(e) => handleInputChange(campo, e.target.value)}
-                  InputLabelProps={{ style: { fontSize: '15px' } }}
-                />
-              )
-            ))}
+          <FormControlLabel
+            control={<Checkbox checked={camposFiltro.nome} onChange={() => handleCheckboxChange('nome')} />}
+            label="Nome do Banco"
+          />
+          <FormControlLabel
+            control={<Checkbox checked={camposFiltro.usuario} onChange={() => handleCheckboxChange('usuario')} />}
+            label="Usuário"
+          />
+          <FormControlLabel
+            control={<Checkbox checked={camposFiltro.cnpj} onChange={() => handleCheckboxChange('cnpj')} />}
+            label="CNPJ"
+          />
+          <FormControlLabel
+            control={<Checkbox checked={camposFiltro.ip} onChange={() => handleCheckboxChange('ip')} />}
+            label="IP"
+          />
+          {Object.keys(camposFiltro).map(campo => (
+            camposFiltro[campo] && (
+              <TextField
+                key={campo}
+                label={`Buscar por ${campo}`}
+                variant="filled"
+                value={termoBusca[campo]}
+                onChange={(e) => handleInputChange(campo, e.target.value)}
+                InputLabelProps={{ style: { fontSize: '15px' } }}
+              />
+            )
+          ))}
         </MenuItem>
       </Menu>
     </div>
