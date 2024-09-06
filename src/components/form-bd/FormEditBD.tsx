@@ -3,8 +3,8 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Tooltip,
   Typography,
+  IconButton,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { TBancoConsulta } from "../../api/usuarios/BancosService";
@@ -15,6 +15,8 @@ import {
   inserirMascaraCpf,
   limitarCampo,
 } from "../../functions/cnpj";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 type TBancoObj = {
   banco: TBancoConsulta;
@@ -24,6 +26,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
   const { handleSubmit, register, setValue, errors, watch } = EditFormBD();
 
   const [isCNPJ, setIsCNPJ] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleDocumentoChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -83,7 +86,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
 
   useEffect(() => {
     if (portaValue) {
-      const limitedPorta = limitarCampo(portaValue, 4);
+      const limitedPorta = removerLetras(limitarCampo(portaValue, 4));
       setValue("porta", limitedPorta);
     }
   }, [portaValue, setValue]);
@@ -118,7 +121,18 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
 
   const [isLoading, setisLoading] = useState(false);
 
+  const cnpjvalue = watch("cnpj");
+
   const handleTeste = async (data: TEditBD) => {
+
+    if (isCNPJ && cnpjvalue.length !== 18) {
+      alert("CNPJ inválido! Por favor, digita novamente");
+      return;
+    } else if (!isCNPJ && cnpjvalue.length !== 14) {
+      alert("CPF inválido! Por favor, digita novamente");
+      return;
+    }
+
     const convertedData = {
       id: data.id,
       cnpj: data.cnpj,
@@ -173,6 +187,19 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
     setsituacao(event.target.value as string);
   };
 
+  const removerLetras = (value: string) => {
+    return value.replace(/[^0-9]/g, "");
+  };
+
+  const handleSenhaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = removerLetras(event.target.value);
+    setValue("senha", value);
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <form
       style={{
@@ -203,7 +230,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
           >
             <Typography sx={{ fontWeight: 600 }}>Documento:</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                 <input
                   type="checkbox"
                   checked={isCNPJ}
@@ -211,7 +238,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
                 />
                 CNPJ
               </label>
-              <label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                 <input
                   type="checkbox"
                   checked={!isCNPJ}
@@ -297,7 +324,7 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
                 fontSize: "0.8rem",
                 border: "1px solid #c2c2c2",
               }}
-              type="number"
+              type="text"
               {...register("porta")}
               placeholder="3306"
             />
@@ -344,17 +371,25 @@ export const FormEditBD = ({ banco }: TBancoObj) => {
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
           <Typography sx={{ fontWeight: 600 }}>Senha:</Typography>
-          <input
-            required
-            style={{
-              outline: "none",
-              padding: ".5em",
-              backgroundColor: "#fff",
-              fontSize: "0.8rem",
-              border: "1px solid #c2c2c2",
-            }}
-            {...register("senha")}
-          />
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <input
+              required
+              style={{
+                outline: "none",
+                padding: ".5em",
+                backgroundColor: "#fff",
+                fontSize: "0.8rem",
+                border: "1px solid #c2c2c2",
+                flex: 1,
+              }}
+              type={showPassword ? "text" : "password"}
+              {...register("senha")}
+              onChange={handleSenhaChange}
+            />
+            <IconButton onClick={toggleShowPassword}>
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </Box>
           {errors.senha && (
             <span
               style={{ color: "#b32929", fontWeight: 600, fontSize: "12px" }}

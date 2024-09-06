@@ -63,7 +63,7 @@ export default function FiltrosBusca({
           />
           <FormControlLabel
             control={<Checkbox checked={camposFiltro.cnpj} onChange={() => handleCheckboxChange('cnpj')} />}
-            label="CNPJ"
+            label="Documento"
           />
           <FormControlLabel
             control={<Checkbox checked={camposFiltro.ip} onChange={() => handleCheckboxChange('ip')} />}

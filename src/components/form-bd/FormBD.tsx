@@ -1,4 +1,4 @@
-import { Box, Checkbox, Typography } from "@mui/material";
+import { Box, Checkbox, Typography, IconButton } from "@mui/material";
 import FBDForm, { TBDForm } from "./formBDhook";
 import { useEffect, useState } from "react";
 import {
@@ -6,7 +6,10 @@ import {
   inserirMascaraCnpj,
   inserirMascaraCpf,
   limitarCampo,
+  removerLetras
 } from "../../functions/cnpj";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 export const FormBD = () => {
   const {
@@ -20,6 +23,7 @@ export const FormBD = () => {
   } = FBDForm();
   const [documentType, setDocumentType] = useState<"cpf" | "cnpj" | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const cnpjValue = watch("cnpj");
   const ipValue = watch("ip");
@@ -41,7 +45,7 @@ export const FormBD = () => {
       setValue("ip", filteredIp);
     }
     if (portaValue) {
-      const limitedPorta = limitarCampo(portaValue, 4);
+      const limitedPorta = removerLetras(limitarCampo(portaValue, 4));
       setValue("porta", limitedPorta);
     }
     if (senhaValue) {
@@ -105,9 +109,9 @@ export const FormBD = () => {
       const resposta = String(result.output);
       console.log(resposta);
       if (resposta.includes("Duplicate entry")) {
-        alert("Erro ao inserir dados: anco já foi cadastrado!");
+        alert("Erro ao inserir dados: banco já foi cadastrado!");
       }
-      if (result.output === "Credenciais salvas com sucesso!\n") {
+      if (resposta.includes("Credenciais salvas com sucesso!")) {
         alert("Credenciais salvas com sucesso!");
         window.location.reload();
       }
@@ -121,6 +125,10 @@ export const FormBD = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -214,7 +222,7 @@ export const FormBD = () => {
               fontSize: "0.8rem",
               border: "1px solid #000",
             }}
-            type="number"
+            type="text"
             {...register("porta")}
             placeholder="3306"
           />
@@ -249,17 +257,23 @@ export const FormBD = () => {
           sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
         >
           <Typography sx={{ fontWeight: 600 }}>Senha:</Typography>
-          <input
-            style={{
-              outline: "none",
-              padding: ".5em",
-              backgroundColor: "#fff",
-              fontSize: "0.8rem",
-              border: "1px solid #000",
-            }}
-            type="text"
-            {...register("senha")}
-          />
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <input
+              style={{
+                outline: "none",
+                padding: ".5em",
+                backgroundColor: "#fff",
+                fontSize: "0.8rem",
+                border: "1px solid #000",
+                flex: 1,
+              }}
+              type={showPassword ? "text" : "password"}
+              {...register("senha")}
+            />
+            <IconButton onClick={toggleShowPassword}>
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </Box>
           {errors.senha && (
             <span style={{ color: "#b32929", fontWeight: 600 }}>
               {errors.senha.message}
