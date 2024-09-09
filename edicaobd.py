@@ -5,7 +5,11 @@ from mysql.connector import Error
 import argparse
 import re
 
-caminho_arquivo = Path(r'C:\Users\Quaestum\Desktop\banco_dados.txt')
+home = Path.home()
+caminho_arquivo = Path(home, 'Desktop', 'banco_dados.txt')
+
+if not caminho_arquivo.exists():
+    caminho_arquivo.touch()
 
 def testar_conexao(ip, porta, usuario, senha, nome_banco):
     try:

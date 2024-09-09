@@ -7,7 +7,8 @@ import argparse
 import re
 
 def salvar_credenciais_txt(id, cnpj, ip, porta, usuario, senha, nome_banco, situacao):
-    file_path = Path(r'C:\Users\Quaestum\Desktop\banco_dados.txt')
+    home = Path.home()
+    file_path = Path(home, 'Desktop', 'banco_dados.txt')
     data = f"{id};{cnpj};{ip};{porta};{usuario};{senha};{nome_banco};{situacao}\n"
     
     if not os.path.exists(file_path):
@@ -84,6 +85,11 @@ def main():
 
     cnpj_numerico = re.sub(r'[^\d]', '', args.cnpj)
     caminho_arquivo = r'C:\Users\Quaestum\Desktop\banco_dados.txt'
+
+    file_path = Path(caminho_arquivo)
+    if not file_path.exists():
+        file_path.touch()
+
     maior_id = obter_maior_id(cnpj=cnpj_numerico, caminho_arquivo=caminho_arquivo)
     novo_id = maior_id + 1
 

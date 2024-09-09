@@ -26,9 +26,15 @@ def run_script():
     )
     return jsonify({'output': result.stdout})
 
+def ensure_file_exists(file_path):
+    if not os.path.exists(file_path):
+        open(file_path, 'w').close()
+
 @app.route('/get-bancos', methods=['GET'])
 def get_bancos():
-    caminho_arquivo = r'C:\Users\Quaestum\Desktop\banco_dados.txt'
+    home = Path.home()
+    caminho_arquivo = Path(home, 'Desktop', 'banco_dados.txt')
+    ensure_file_exists(caminho_arquivo)
     bancos = ler_bancos_txt(caminho_arquivo)
     return jsonify(bancos)
 
